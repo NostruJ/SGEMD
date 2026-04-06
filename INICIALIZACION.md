@@ -261,10 +261,12 @@ docker compose down
 | 43 | Bind parameters undefined al cambiar estado | Backend: modificar update() para aceptar campos parciales |
 | 44 | Descripción larga incomoda vista | Agregar modal de detalles y "Ver más" en Asesorias.jsx |
 | 45 | Error bind parameters UPDATE advice | Modificar advice.service.js para actualizaciones parciales |
+| 46 | Sistema de asesorías sin filtrado por perfil | Backend filtra por maestro/estudiante según rol en token JWT |
+| 47 | Estudiante no puede solicitar asesoría | Incluir Docentes_idDocentes al crear asesoría |
+| 48 | Maestro no ve ID al crear asesoría | Obtener ID del maestro logueado y enviar en POST |
+| 49 | Dropdown se cierra al hacer click | Agregar e.stopPropagation() en toggleDropdown |
 
 ---
-
-## 9. Mantenimiento y Actualización
 
 ### 9.1 Actualizar el Proyecto
 ```bash

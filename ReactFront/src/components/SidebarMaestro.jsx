@@ -35,6 +35,7 @@ const menuStructure = [
   { title: 'Emprendimientos', items: ['Perfil de Emprendimiento', 'Seguimiento', 'Tareas'] },
   { title: 'Asesorías', items: ['Mis Asesorías', 'Crear Asesoría', 'Editar Asesoría'] },
   { title: 'Diagnósticos', items: ['Ver Diagnósticos'] },
+  { title: 'Eventos', items: ['Gestionar Eventos'] },
 ];
 
 const SidebarMaestro = () => {
@@ -64,6 +65,7 @@ const SidebarMaestro = () => {
     if (item === 'crearasesoria') return '/maestro/asesorias/crear';
     if (item === 'editarasesoria') return '/maestro/asesorias/editar';
     if (item === 'verdiagnósticos') return '/maestro/diagnosticos';
+    if (item === 'gestionareventos') return '/maestro/eventos';
 
     return `/maestro/${base}/${item}`;
   };

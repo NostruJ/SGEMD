@@ -29,30 +29,36 @@ const AsesoriasRecursos = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [docenteSeleccionado]);
+
+  useEffect(() => {
+    if (mostrarFormulario && !docenteSeleccionado) {
+      setMostrarFormulario(false);
+    }
+  }, [docenteSeleccionado, mostrarFormulario]);
 
   const fetchData = async () => {
     try {
       const headers = getAuthHeaders();
       
-      const [userRes, asesoriasRes, teachersRes] = await Promise.all([
+      const [userRes, teachersRes] = await Promise.all([
         fetch(`${API_URL}/segmed/users/me`, { headers, credentials: 'include' }),
-        fetch(`${API_URL}/segmed/advice`, { headers }),
         fetch(`${API_URL}/segmed/users/teachers`, { headers })
       ]);
 
       const userData = await userRes.json();
-      const asesoriasData = await asesoriasRes.json();
       const teachersData = await teachersRes.json();
 
       setUser(userData.data || userData);
       setDocentes(teachersData.data || []);
 
-      const todasAsesorias = asesoriasData.data || [];
-      setAsesorias(todasAsesorias);
-
       const userId = userData.data?.idusuarios || userData.data?.idUsuarios;
       if (userId) {
+        const asesoriasRes = await fetch(`${API_URL}/segmed/advice`, { headers });
+        const asesoriasData = await asesoriasRes.json();
+        const todasAsesorias = asesoriasData.data || [];
+        setAsesorias(todasAsesorias);
+
         const mias = todasAsesorias.filter(a => a.Usuarios_idUsuarios === userId);
         setMisAsesorias(mias);
       }
@@ -108,6 +114,7 @@ const AsesoriasRecursos = () => {
 
     try {
       const userId = user?.idusuarios || user?.idUsuarios;
+      const docenteId = docenteSeleccionado;
 
       const response = await fetch(`${API_URL}/segmed/advice`, {
         method: 'POST',
@@ -118,6 +125,7 @@ const AsesoriasRecursos = () => {
           Fecha_asesoria: solicitud.Fecha_asesoria,
           Comentarios: '',
           Usuarios_idUsuarios: userId,
+          Docentes_idDocentes: docenteId,
           confirmacion: 'pendiente',
           Modalidad_idModalidad: 1,
           Fecha_y_Horarios_idFecha_y_Horarios: 1,

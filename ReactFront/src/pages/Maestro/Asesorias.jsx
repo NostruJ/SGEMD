@@ -108,8 +108,13 @@ const Asesorias = () => {
     }
   };
 
-  const toggleDropdown = (id) => {
+  const toggleDropdown = (id, e) => {
+    e.stopPropagation();
     setDropdownAbierto(dropdownAbierto === id ? null : id);
+  };
+
+  const closeDropdown = () => {
+    setDropdownAbierto(null);
   };
 
   const verDetalles = (asesoria) => {
@@ -263,7 +268,7 @@ const Asesorias = () => {
                           <button 
                             className="btn btn-sm btn-outline-secondary dropdown-toggle" 
                             type="button"
-                            onClick={() => toggleDropdown(asesoria.idAsesorias)}
+                            onClick={(e) => toggleDropdown(asesoria.idAsesorias, e)}
                           >
                             Gestionar
                           </button>
@@ -274,6 +279,7 @@ const Asesorias = () => {
                               zIndex: 1000,
                               display: dropdownAbierto === asesoria.idAsesorias ? 'block' : 'none'
                             }}
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <li><button className="dropdown-item" onClick={() => handleCambiarEstado(asesoria.idAsesorias, 'confirmada')}>✓ Confirmar</button></li>
                             <li><button className="dropdown-item" onClick={() => handleCambiarEstado(asesoria.idAsesorias, 'completada')}>✓ Completar</button></li>

@@ -323,10 +323,12 @@ CREATE TABLE IF NOT EXISTS asesorias (
     Fecha_actualizacion DATETIME NOT NULL,
     confirmacion VARCHAR(20) DEFAULT 'pendiente',
     Usuarios_idUsuarios INT NOT NULL,
+    Docentes_idDocentes INT,
     Modalidad_idModalidad INT NOT NULL,
     Fecha_y_Horarios_idFecha_y_Horarios INT NOT NULL,
     PRIMARY KEY (idAsesorias),
     FOREIGN KEY (Usuarios_idUsuarios) REFERENCES usuarios(idUsuarios),
+    FOREIGN KEY (Docentes_idDocentes) REFERENCES usuarios(idUsuarios),
     FOREIGN KEY (Modalidad_idModalidad) REFERENCES modalidad(idModalidad),
     FOREIGN KEY (Fecha_y_Horarios_idFecha_y_Horarios) REFERENCES fecha_y_Horarios(idFecha_y_Horarios)
 );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3005';
@@ -15,6 +15,7 @@ const AsesoriasCrear = () => {
   const [estudiantes, setEstudiantes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [user, setUser] = useState(null);
   const [form, setForm] = useState({
     Nombre_de_asesoria: '',
     Descripcion: '',
@@ -23,6 +24,25 @@ const AsesoriasCrear = () => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const fetchUser = async () => {
+    try {
+      const res = await fetch(`${API_URL}/segmed/users/me`, {
+        headers: getAuthHeaders(),
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (data.success || data.data) {
+        setUser(data.data || data);
+      }
+    } catch (err) {
+      console.error('Error:', err);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -86,6 +106,8 @@ const AsesoriasCrear = () => {
     }
 
     try {
+      const docenteId = user?.idusuarios || user?.idUsuarios;
+      
       const res = await fetch(`${API_URL}/segmed/advice`, {
         method: 'POST',
         headers: getAuthHeaders(),
@@ -94,7 +116,8 @@ const AsesoriasCrear = () => {
           Descripcion: form.Descripcion || '',
           Fecha_asesoria: form.Fecha_asesoria,
           confirmacion: 'pendiente',
-          Estudiantes_idEstudiante: parseInt(form.Estudiantes_idEstudiante),
+          Usuarios_idUsuarios: parseInt(form.Estudiantes_idEstudiante),
+          Docentes_idDocentes: docenteId,
           Modalidad_idModalidad: 1,
           Fecha_y_Horarios_idFecha_y_Horarios: 1,
           Fecha_creacion: new Date().toISOString().split('T')[0],

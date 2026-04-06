@@ -24,7 +24,6 @@ exports.authenticateToken = (req, res, next) => {
     });
 
     if (!token) {
-        console.warn('⚠️ Token ausente en:', req.path);
         return res.status(401).json({ 
             success: false, 
             error: 'Se requiere token de autenticación válido' 
@@ -33,14 +32,26 @@ exports.authenticateToken = (req, res, next) => {
 
     try {
         const decodedToken = jwt.verify(token, JWT_SECRET);
-        console.log('🔑 Token decodificado completo:', JSON.stringify(decodedToken));
-        console.log('✅ Token válido para usuario:', decodedToken.id);
+        
+        // Mapear rol del token (soporta formato nuevo y antiguo)
+        let rolId = decodedToken.rolId || decodedToken.Roles_idRoles1;
+        
+        // Si rolId sigue siendo undefined o es string, inferir del nombre del rol
+        if (!rolId || typeof rolId === 'string') {
+            const rolString = decodedToken.Rol || decodedToken.role || '';
+            if (rolString === 'Administrador' || rolString === 'Admin') rolId = 1;
+            else if (rolString === 'Estudiante') rolId = 2;
+            else if (rolString === 'Docente' || rolString === 'Maestro') rolId = 3;
+            else rolId = parseInt(rolString) || null;
+        }
+        
         // Añadir información del usuario verificado a la request
         req.user = {
             id: decodedToken.id || decodedToken.idusuarios,
-            Rol: decodedToken.Rol
+            idusuarios: decodedToken.id || decodedToken.idusuarios,
+            Rol: decodedToken.role || decodedToken.Rol,
+            Roles_idRoles1: rolId
         };
-        console.log('📌 req.user establecido:', req.user);
         next();
     } catch (err) {
         console.error('❌ Error verificando token:', err.message);

@@ -36,7 +36,8 @@ exports.login = async (email, password) => {
                 id: user.idUsuarios,
                 email: user.CorreoInstitucional,
                 role: user.Rol,
-                userType: user.TipodeUsuario
+                userType: user.TipodeUsuario,
+                rolId: user.Roles_idRoles1 // Incluir rol numérico
             },
             JWT_SECRET,
             { expiresIn: '24h' }

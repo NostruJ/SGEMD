@@ -85,7 +85,7 @@
 - CORS no permite el origen
 - Backend no está corriendo
 **Solución:** Verificar que los puertos coincidan y que CORS esté configurado
-**Estado:** ⚠️ En proceso
+**Estado:** ✅ Resuelto (2026-04-05) - Los contenedores están corriendo correctamente
 
 ---
 
@@ -155,6 +155,9 @@
 - [x] Login funciona completamente
 - [x] Registro funciona (verificado con test-email)
 - [x] Redirección según rol funciona
+- [x] Contenedores Docker corriendo (2026-04-05)
+- [x] Backend responde en http://localhost:3005
+- [x] Frontend responde en http://localhost:3001
 
 ---
 
@@ -211,7 +214,7 @@
 - Verificar que no haya referencias a LoginForm.js en el código
 - Si persiste, el usuario debe limpiar cache del navegador (Ctrl+Shift+Delete)
 **Archivo:** N/A - Problema de cache del navegador
-**Estado:** ⚠️ En proceso (2026-03-31)
+**Estado:** ✅ Resuelto (2026-04-05) - Rebuild completado, contenedores funcionando
 
 ---
 
@@ -887,4 +890,64 @@ CREATE TABLE emprendimiento_usuarios (
 
 ---
 
-*Última actualización: 2026-04-03*
+## 62. Error: Sistema de Asesorías sin filtrado por perfil
+**Causa:** El backend no filtraba las asesorías por usuario. Todos veían todas las asesorías.
+
+**Solución:** 
+- Agregar columna `Docentes_idDocentes` a tabla `asesorias`
+- Modificar `auth.service.js` para incluir `rolId` (número) en el token JWT
+- Modificar `auth.middleware.js` para mapear correctamente el rol del token
+- Modificar `advice.controller.js` para filtrar por docente/estudiante según el rol
+- Modificar `advice.service.js` para aceptar filtros en `findAll()`
+
+**Archivos modificados:**
+- `NodeBack/database/schema.sql` - agregada columna Docentes_idDocentes
+- `NodeBack/src/services/auth.service.js` - token incluye rolId
+- `NodeBack/src/middleware/auth.middleware.js` - mapea rol correctamente
+- `NodeBack/src/controllers/advice.controller.js` - aplica filtros por rol
+- `NodeBack/src/services/advice.service.js` - findAll() acepta filtros
+
+**Base de datos:**
+- Ejecutar: `ALTER TABLE asesorias ADD COLUMN Docentes_idDocentes INT NULL;`
+
+**Estado:** ✅ Resuelto (2026-04-05)
+
+---
+
+## 63. Error: Estudiante no puede solicitar asesoría correctamente
+**Causa:** El formulario de solicitud no enviaba el ID del docente.
+
+**Solución:** Modificar `AsesoriasRecursos.jsx` para enviar `Docentes_idDocentes` al crear asesoría.
+
+**Archivos modificados:**
+- `ReactFront/src/pages/Estudiante/AsesoriasRecursos.jsx`
+
+**Estado:** ✅ Resuelto (2026-04-05)
+
+---
+
+## 64. Error: Maestro no puede crear asesoría asociada a su ID
+**Causa:** Al crear asesoría, no se incluía el ID del maestro logueado.
+
+**Solución:** Modificar `AsesoriasCrear.jsx` para obtener y enviar el ID del maestro actual.
+
+**Archivos modificados:**
+- `ReactFront/src/pages/Maestro/AsesoriasCrear.jsx`
+
+**Estado:** ✅ Resuelto (2026-04-05)
+
+---
+
+## 65. Error: Dropdown de gestión se cierra al hacer click
+**Causa:** Evento bubbling causaba que el dropdown se cerrara al hacer click en las opciones.
+
+**Solución:** Agregar `e.stopPropagation()` en el handler del dropdown.
+
+**Archivos modificados:**
+- `ReactFront/src/pages/Maestro/Asesorias.jsx`
+
+**Estado:** ✅ Resuelto (2026-04-05)
+
+---
+
+*Última actualización: 2026-04-05*

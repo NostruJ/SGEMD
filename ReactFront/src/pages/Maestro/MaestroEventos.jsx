@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3005';
 
@@ -10,11 +9,10 @@ const getAuthHeaders = () => {
   return headers;
 };
 
-const AdminEventos = () => {
+const MaestroEventos = () => {
   const [eventos, setEventos] = useState([]);
   const [tiposEvento, setTiposEvento] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editEvento, setEditEvento] = useState(null);
   const [form, setForm] = useState({
@@ -33,37 +31,39 @@ const AdminEventos = () => {
   const fetchData = async () => {
     try {
       const headers = getAuthHeaders();
-      const [eventosRes, tiposRes] = await Promise.all([
+      
+      const [eventsRes, tiposRes] = await Promise.all([
         fetch(`${API_URL}/segmed/event`, { headers }),
         fetch(`${API_URL}/segmed/type-event`, { headers })
       ]);
-      const eventosData = await eventosRes.json();
+
+      const eventsData = await eventsRes.json();
       const tiposData = await tiposRes.json();
-      
-      if (eventosData.success) {
-        setEventos(eventosData.data || []);
-      }
+
+      setEventos(eventsData.data || []);
       setTiposEvento(tiposData.data || []);
     } catch (err) {
       console.error('Error:', err);
-      setError('Error al cargar eventos');
     } finally {
       setLoading(false);
     }
   };
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return 'Sin fecha';
+    return new Date(dateStr).toLocaleDateString('es-CO', { 
+      day: '2-digit', month: 'short', year: 'numeric' 
+    });
+  };
+
   const getTipoNombre = (tipo) => {
-    if (!tipo) return 'Sin tipo';
+    if (!tipo) return 'General';
     if (tipo.Academico === '1' || tipo.Academico === 1) return 'Académico';
     if (tipo.Cultura === '1' || tipo.Cultura === 1) return 'Cultura';
     if (tipo.Deportivo === '1' || tipo.Deportivo === 1) return 'Deportivo';
     if (tipo.Social === '1' || tipo.Social === 1) return 'Social';
     if (tipo.Conferencia === '1' || tipo.Conferencia === 1) return 'Conferencia';
-    return 'Sin tipo';
-  };
-
-  const getTipoIdFromEvento = (evento) => {
-    return evento?.Tipo_evento_idTipo_evento || '';
+    return 'General';
   };
 
   const getTipoNombreFromId = (tipoId) => {
@@ -71,26 +71,53 @@ const AdminEventos = () => {
     return getTipoNombre(tipo);
   };
 
+  const getEstadoBadge = (estado) => {
+    const estilos = {
+      'activo': { bg: '#4CAF50', texto: 'white', label: 'Activo' },
+      'inactivo': { bg: '#6c757d', texto: 'white', label: 'Inactivo' },
+      'finalizado': { bg: '#dc3545', texto: 'white', label: 'Finalizado' },
+      'proximo': { bg: '#1a75bc', texto: 'white', label: 'Próximo' }
+    };
+    const estilo = estilos[estado] || estilos['proximo'];
+    return (
+      <span style={{ 
+        padding: '4px 12px', 
+        borderRadius: '12px', 
+        backgroundColor: estilo.bg, 
+        color: estilo.texto,
+        fontSize: '12px',
+        fontWeight: '500'
+      }}>
+        {estilo.label}
+      </span>
+    );
+  };
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setForm(prev => ({ 
+      ...prev, 
+      [name]: type === 'checkbox' ? checked : value 
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const headers = getAuthHeaders();
       let res;
+      
       if (editEvento) {
         res = await fetch(`${API_URL}/segmed/event/${editEvento.idEventos}`, {
           method: 'PUT',
-          headers: getAuthHeaders(),
+          headers,
           body: JSON.stringify(form),
           credentials: 'include'
         });
       } else {
         res = await fetch(`${API_URL}/segmed/event`, {
           method: 'POST',
-          headers: getAuthHeaders(),
+          headers,
           body: JSON.stringify(form),
           credentials: 'include'
         });
@@ -149,7 +176,7 @@ const AdminEventos = () => {
 
   if (loading) {
     return (
-      <div className="container mt-5 text-center">
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '50vh' }}>
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Cargando...</span>
         </div>
@@ -158,74 +185,73 @@ const AdminEventos = () => {
   }
 
   return (
-    <div className="container mt-4">
-      <div className="card shadow-sm">
-        <div className="card-header bg-white d-flex justify-content-between align-items-center">
-          <h4 className="mb-0 text-primary">Gestión de Eventos</h4>
-          <button className="btn btn-primary" onClick={openCreateModal}>
-            + Crear Evento
-          </button>
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h1 style={{ color: '#0c4a6e', marginBottom: '5px' }}>📅 Eventos</h1>
+          <p style={{ color: '#666', margin: 0 }}>Gestión de eventos académicos</p>
         </div>
-        <div className="card-body">
-          {error && <div className="alert alert-danger">{error}</div>}
-          
-          {eventos.length === 0 ? (
-            <div className="text-center py-5">
-              <p className="text-muted">No hay eventos registrados</p>
-              <button className="btn btn-primary" onClick={openCreateModal}>
-                Crear Primer Evento
-              </button>
-            </div>
-          ) : (
-            <div className="table-responsive">
-              <table className="table table-hover">
-                <thead className="table-light">
-                  <tr>
-                    <th>Nombre</th>
-                    <th>Tipo</th>
-                    <th>Capacidad</th>
-                    <th>Requiere Registro</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {eventos.map((evento, idx) => (
-                    <tr key={idx}>
-                      <td style={{ fontWeight: '500', color: '#0c4a6e' }}>{evento.Nombre_evento}</td>
-                      <td>{getTipoNombreFromId(evento.Tipo_evento_idTipo_evento)}</td>
-                      <td>{evento.Capacidad_maxima || 'N/A'}</td>
-                      <td>{evento.Requiere_registro === 1 ? 'Sí' : 'No'}</td>
-                      <td>
-                        <span className={`badge ${evento.Estado === 'activo' ? 'bg-success' : evento.Estado === 'proximo' ? 'bg-info' : 'bg-secondary'}`}>
-                          {evento.Estado || 'Activo'}
-                        </span>
-                      </td>
-                      <td>
-                        <button className="btn btn-sm btn-outline-primary me-2" onClick={() => handleEdit(evento)}>
-                          Editar
-                        </button>
-                        <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(evento.idEventos)}>
-                          Eliminar
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+        <button className="btn btn-primary" onClick={openCreateModal} style={{ backgroundColor: '#1a75bc' }}>
+          + Crear Evento
+        </button>
       </div>
+
+      {eventos.length === 0 ? (
+        <div className="card">
+          <div className="card-body text-center" style={{ padding: '50px' }}>
+            <p style={{ fontSize: '48px', marginBottom: '15px' }}>📭</p>
+            <p style={{ color: '#666', fontSize: '18px' }}>No hay eventos registrados</p>
+            <button className="btn btn-primary" onClick={openCreateModal} style={{ backgroundColor: '#1a75bc' }}>
+              Crear Primer Evento
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="table-responsive">
+          <table className="table table-hover">
+            <thead className="table-light">
+              <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Tipo</th>
+                <th>Capacidad</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {eventos.map((evento) => (
+                <tr key={evento.idEventos}>
+                  <td style={{ fontWeight: '500', color: '#0c4a6e' }}>{evento.Nombre_evento}</td>
+                  <td style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {evento.Descripcion_evento || 'Sin descripción'}
+                  </td>
+                  <td>{getTipoNombreFromId(evento.Tipo_evento_idTipo_evento)}</td>
+                  <td>{evento.Capacidad_maxima || 'N/A'}</td>
+                  <td>{getEstadoBadge(evento.Estado)}</td>
+                  <td>
+                    <button className="btn btn-sm btn-outline-primary me-2" onClick={() => handleEdit(evento)}>
+                      Editar
+                    </button>
+                    <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(evento.idEventos)}>
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {showModal && (
         <>
           <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1">
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
-                <div className="modal-header">
+                <div className="modal-header" style={{ backgroundColor: '#0c4a6e', color: 'white' }}>
                   <h5 className="modal-title">{editEvento ? 'Editar Evento' : 'Crear Evento'}</h5>
-                  <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+                  <button type="button" className="btn-close btn-close-white" onClick={() => setShowModal(false)}></button>
                 </div>
                 <form onSubmit={handleSubmit}>
                   <div className="modal-body">
@@ -276,7 +302,7 @@ const AdminEventos = () => {
                   </div>
                   <div className="modal-footer">
                     <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
-                    <button type="submit" className="btn btn-primary">{editEvento ? 'Guardar' : 'Crear'}</button>
+                    <button type="submit" className="btn btn-primary" style={{ backgroundColor: '#1a75bc' }}>{editEvento ? 'Guardar' : 'Crear'}</button>
                   </div>
                 </form>
               </div>
@@ -289,4 +315,4 @@ const AdminEventos = () => {
   );
 };
 
-export default AdminEventos;
+export default MaestroEventos;

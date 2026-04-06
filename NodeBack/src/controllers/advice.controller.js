@@ -2,10 +2,24 @@ const asesoria = require('../services/advice.service');
 
 exports.getAll = async (req, res) => {
     try {
-        const data = await asesoria.findAll()
-        res.json({ success: true, data: data })
+        const filters = {};
+        
+        const rolUsuario = parseInt(req.user?.Roles_idRoles1) || 0;
+        
+        // Si es maestro (rol 3), solo mostrar sus asesorías
+        if (rolUsuario === 3) {
+            filters.docenteId = req.user.idusuarios;
+        }
+        // Si es estudiante (rol 2), solo mostrar sus asesorías
+        else if (rolUsuario === 2) {
+            filters.estudianteId = req.user.idusuarios;
+        }
+        // Admin (rol 1) ve todas las asesorías sin filtro
+        
+        const data = await asesoria.findAll(filters);
+        res.json({ success: true, data: data });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message })
+        res.status(500).json({ success: false, error: error.message });
     }
 }
 

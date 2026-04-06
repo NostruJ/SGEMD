@@ -33,6 +33,7 @@ import MaestroEmprendimientos from "./pages/Maestro/Emprendimientos.jsx";
 import MaestroEmpSeguimiento from "./pages/Maestro/EmpSeguimiento.jsx";
 import MaestroTareas from "./pages/Maestro/MaestroTareas.jsx";
 import MaestroDiagnostico from "./pages/Maestro/MaestroDiagnostico.jsx";
+import MaestroEventos from "./pages/Maestro/MaestroEventos.jsx";
 
 // 🔹 Páginas del Estudiante
 import EstudianteLayout from "./pages/Estudiante/EstudianteLayout.jsx";
@@ -155,6 +156,7 @@ function App() {
           <Route path="emprendimientos/seguimiento" element={<MaestroEmpSeguimiento />} />
           <Route path="tareas" element={<MaestroTareas />} />
           <Route path="diagnosticos" element={<MaestroDiagnostico />} />
+          <Route path="eventos" element={<MaestroEventos />} />
         </Route>
 
         {/* ========================================================= */}

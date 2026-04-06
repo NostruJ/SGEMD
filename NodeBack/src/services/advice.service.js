@@ -1,14 +1,27 @@
 const { pool } = require('../config/db.config')
 
-exports.findAll = async () => {
-    const [rows] = await pool.execute('SELECT * FROM asesorias')
-    return rows
+exports.findAll = async (filters = {}) => {
+    let query = 'SELECT * FROM asesorias WHERE 1=1';
+    const params = [];
+    
+    if (filters.docenteId) {
+        query += ' AND Docentes_idDocentes = ?';
+        params.push(filters.docenteId);
+    }
+    
+    if (filters.estudianteId) {
+        query += ' AND Usuarios_idUsuarios = ?';
+        params.push(filters.estudianteId);
+    }
+    
+    const [rows] = await pool.execute(query, params);
+    return rows;
 }
 
 exports.findById = async (id) => {
-    const [rows] = await pool.execute('SELECT * FROM asesorias WHERE idasesorias = ?', [id])
-    if (rows.length === 0) throw new Error('Asesoría no encontrada')
-    return rows[0]
+    const [rows] = await pool.execute('SELECT * FROM asesorias WHERE idasesorias = ?', [id]);
+    if (rows.length === 0) throw new Error('Asesoría no encontrada');
+    return rows[0];
 }
 
 exports.create = async (data) => {
@@ -17,8 +30,8 @@ exports.create = async (data) => {
         `INSERT INTO asesorias (
             Nombre_de_asesoria, Descripcion, Fecha_asesoria, Comentarios,
             Fecha_creacion, Fecha_actualizacion, confirmacion,
-            Usuarios_idUsuarios, Modalidad_idModalidad, Fecha_y_Horarios_idFecha_y_Horarios
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            Usuarios_idUsuarios, Docentes_idDocentes, Modalidad_idModalidad, Fecha_y_Horarios_idFecha_y_Horarios
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
             data.Nombre_de_asesoria || null,
             data.Descripcion || null,
@@ -28,11 +41,12 @@ exports.create = async (data) => {
             data.Fecha_actualizacion || fechaActual,
             data.confirmacion || 'pendiente',
             data.Estudiantes_idEstudiante || data.Usuarios_idUsuarios || null,
+            data.Docentes_idDocentes || null,
             data.Modalidad_idModalidad || 1,
             data.Fecha_y_Horarios_idFecha_y_Horarios || 1
         ]
-    )
-    return { idasesorias: result.insertId, ...data }
+    );
+    return { idasesorias: result.insertId, ...data };
 }
 
 exports.update = async (id, data) => {
@@ -67,6 +81,10 @@ exports.update = async (id, data) => {
         updates.push('Usuarios_idUsuarios = ?');
         values.push(data.Usuarios_idUsuarios);
     }
+    if (data.Docentes_idDocentes !== undefined) {
+        updates.push('Docentes_idDocentes = ?');
+        values.push(data.Docentes_idDocentes);
+    }
     if (data.Modalidad_idModalidad !== undefined) {
         updates.push('Modalidad_idModalidad = ?');
         values.push(data.Modalidad_idModalidad);
@@ -89,6 +107,6 @@ exports.update = async (id, data) => {
 exports.remove = async (id) => {
     const [result] = await pool.execute(
         'DELETE FROM asesorias WHERE idasesorias = ?', [id]
-    )
-    return result.affectedRows > 0
+    );
+    return result.affectedRows > 0;
 }
