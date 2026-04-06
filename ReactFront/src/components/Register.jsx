@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3005";
+const API_URL = 'http://localhost:3005';
 
 function Register({ setUsuario }) {
   const [activeTab, setActiveTab] = useState("login");
@@ -89,9 +89,10 @@ function Register({ setUsuario }) {
         localStorage.setItem("token", data.data.token);
         const user = data.data.user;
         
-        if (user && typeof user.Rol === "number") {
+        if (user && (typeof user.Rol === "number" || typeof user.Roles_idRoles1 === "number")) {
           const rolesMap = { 1: "administrador", 2: "estudiante", 3: "maestro" };
-          const rol = rolesMap[user.Rol] || "desconocido";
+          const userRol = user.Rol || user.Roles_idRoles1;
+          const rol = rolesMap[userRol] || "desconocido";
 
           // Set global usuario in App so PrivateRoute works
           if (typeof setUsuario === "function") {

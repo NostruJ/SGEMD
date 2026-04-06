@@ -99,9 +99,9 @@ export default function GestionarUsuarios({ role }) {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('¿Desea desactivar este usuario?')) return;
+        if (!window.confirm('¿Desea eliminar este usuario definitivamente? Esta acción no se puede deshacer.')) return;
         try {
-            const res = await apiFetch(`${API_URL}/segmed/users/${id}`, {
+            const res = await apiFetch(`${API_URL}/segmed/users/${id}/hard`, {
                 method: 'DELETE'
             });
             if (res.success || res.message) {
@@ -111,7 +111,7 @@ export default function GestionarUsuarios({ role }) {
             }
         } catch (err) {
             console.error(err);
-            alert('Error al desactivar usuario');
+            alert('Error al eliminar usuario');
         }
     };
 

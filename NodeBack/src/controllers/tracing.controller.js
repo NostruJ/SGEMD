@@ -9,6 +9,15 @@ exports.getAll = async (req, res) => {
     }
 }
 
+exports.getByEmprendimiento = async (req, res) => {
+    try {
+        const data = await seguimiento.findByEmprendimiento(req.params.empId)
+        res.json({ success: true, data: data })
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message })
+    }
+}
+
 exports.getById = async (req, res) => {
     try {
         const data = await seguimiento.findById(req.params.id)

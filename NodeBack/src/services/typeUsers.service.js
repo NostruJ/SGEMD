@@ -1,12 +1,12 @@
 const { pool } = require('../config/db.config')
 
 exports.findAll = async () => {
-    const [rows] = await pool.execute('SELECT * FROM TipoUsuarios')
+    const [rows] = await pool.execute('SELECT * FROM tipousuarios')
     return rows
 }
 
 exports.findById = async (id) => {
-    const [rows] = await pool.execute('SELECT * FROM TipoUsuarios WHERE idTipoUsuarios = ?', [id])
+    const [rows] = await pool.execute('SELECT * FROM tipousuarios WHERE idtipousuarios = ?', [id])
     if (rows.length === 0) throw new Error('Tipo de usuario no encontrado')
     return rows[0]
 }
@@ -15,7 +15,7 @@ exports.create = async (data) => {
     // Ajusta los campos según la tabla
     const fechaActual = new Date()
     const [result] = await pool.execute(
-        'INSERT INTO TipoUsuarios (TipodeUsuario, FechaCreacion, FechaActualizacion) VALUES (?, ?, ?)',
+        'INSERT INTO tipousuarios (TipodeUsuario, FechaCreacion, FechaActualizacion) VALUES (?, ?, ?)',
         [data.TipodeUsuario,fechaActual,fechaActual]
     )
     return { id: result.insertId, ...data }
@@ -24,7 +24,7 @@ exports.create = async (data) => {
 exports.update = async (id, data) => {
     // Ajusta los campos según la tabla
     const [result] = await pool.execute(
-        'UPDATE TipoUsuarios SET TipodeUsuario = ?, FechaActualizacion = ? WHERE idTipoUsuarios = ?',
+        'UPDATE tipousuarios SET TipodeUsuario = ?, FechaActualizacion = ? WHERE idtipousuarios = ?',
         [data.TipodeUsuario, new Date(), id]
     )
     return result.affectedRows > 0
@@ -32,7 +32,7 @@ exports.update = async (id, data) => {
 
 exports.remove = async (id) => {
     const [result] = await pool.execute(
-        'DELETE FROM TipoUsuarios WHERE idTipoUsuarios = ?', [id]
+        'DELETE FROM tipousuarios WHERE idtipousuarios = ?', [id]
     )
     return result.affectedRows > 0;
 }

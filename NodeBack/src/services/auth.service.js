@@ -2,7 +2,7 @@ const { pool } = require('../config/db.config');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = 'segmed_jwt_secret_2025'; // Cambiar en producción
+const JWT_SECRET = process.env.JWT_SECRET || 'sgemd_super_secret_key_2025';
 
 exports.login = async (email, password) => {
     console.log('Auth attempt:', { email });

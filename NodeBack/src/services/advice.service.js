@@ -1,66 +1,94 @@
 const { pool } = require('../config/db.config')
 
 exports.findAll = async () => {
-    const [rows] = await pool.execute('SELECT * FROM Asesorias')
+    const [rows] = await pool.execute('SELECT * FROM asesorias')
     return rows
 }
 
 exports.findById = async (id) => {
-    const [rows] = await pool.execute('SELECT * FROM Asesorias WHERE idAsesorias = ?', [id])
+    const [rows] = await pool.execute('SELECT * FROM asesorias WHERE idasesorias = ?', [id])
     if (rows.length === 0) throw new Error('Asesoría no encontrada')
     return rows[0]
 }
 
 exports.create = async (data) => {
+    const fechaActual = new Date().toISOString().split('T')[0];
     const [result] = await pool.execute(
-        `INSERT INTO Asesorias (
+        `INSERT INTO asesorias (
             Nombre_de_asesoria, Descripcion, Fecha_asesoria, Comentarios,
             Fecha_creacion, Fecha_actualizacion, confirmacion,
             Usuarios_idUsuarios, Modalidad_idModalidad, Fecha_y_Horarios_idFecha_y_Horarios
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
-            data.Nombre_de_asesoria,
-            data.Descripcion,
-            data.Fecha_asesoria,
-            data.Comentarios,
-            data.Fecha_creacion,
-            data.Fecha_actualizacion,
-            data.confirmacion,
-            data.Usuarios_idUsuarios,
-            data.Modalidad_idModalidad,
-            data.Fecha_y_Horarios_idFecha_y_Horarios
+            data.Nombre_de_asesoria || null,
+            data.Descripcion || null,
+            data.Fecha_asesoria || null,
+            data.Comentarios || null,
+            data.Fecha_creacion || fechaActual,
+            data.Fecha_actualizacion || fechaActual,
+            data.confirmacion || 'pendiente',
+            data.Estudiantes_idEstudiante || data.Usuarios_idUsuarios || null,
+            data.Modalidad_idModalidad || 1,
+            data.Fecha_y_Horarios_idFecha_y_Horarios || 1
         ]
     )
-    return { id: result.insertId, ...data }
+    return { idasesorias: result.insertId, ...data }
 }
 
 exports.update = async (id, data) => {
+    let updates = [];
+    let values = [];
+    
+    if (data.Nombre_de_asesoria !== undefined) {
+        updates.push('Nombre_de_asesoria = ?');
+        values.push(data.Nombre_de_asesoria);
+    }
+    if (data.Descripcion !== undefined) {
+        updates.push('Descripcion = ?');
+        values.push(data.Descripcion || null);
+    }
+    if (data.Fecha_asesoria !== undefined) {
+        updates.push('Fecha_asesoria = ?');
+        values.push(data.Fecha_asesoria);
+    }
+    if (data.Comentarios !== undefined) {
+        updates.push('Comentarios = ?');
+        values.push(data.Comentarios || null);
+    }
+    if (data.Fecha_actualizacion !== undefined) {
+        updates.push('Fecha_actualizacion = ?');
+        values.push(data.Fecha_actualizacion);
+    }
+    if (data.confirmacion !== undefined) {
+        updates.push('confirmacion = ?');
+        values.push(data.confirmacion);
+    }
+    if (data.Usuarios_idUsuarios !== undefined) {
+        updates.push('Usuarios_idUsuarios = ?');
+        values.push(data.Usuarios_idUsuarios);
+    }
+    if (data.Modalidad_idModalidad !== undefined) {
+        updates.push('Modalidad_idModalidad = ?');
+        values.push(data.Modalidad_idModalidad);
+    }
+    if (data.Fecha_y_Horarios_idFecha_y_Horarios !== undefined) {
+        updates.push('Fecha_y_Horarios_idFecha_y_Horarios = ?');
+        values.push(data.Fecha_y_Horarios_idFecha_y_Horarios);
+    }
+    
+    if (updates.length === 0) return false;
+    
+    values.push(id);
     const [result] = await pool.execute(
-        `UPDATE Asesorias SET
-            Nombre_de_asesoria = ?, Descripcion = ?, Fecha_asesoria = ?, Comentarios = ?,
-            Fecha_creacion = ?, Fecha_actualizacion = ?, confirmacion = ?,
-            Usuarios_idUsuarios = ?, Modalidad_idModalidad = ?, Fecha_y_Horarios_idFecha_y_Horarios = ?
-        WHERE idAsesorias = ?`,
-        [
-            data.Nombre_de_asesoria,
-            data.Descripcion,
-            data.Fecha_asesoria,
-            data.Comentarios,
-            data.Fecha_creacion,
-            data.Fecha_actualizacion,
-            data.confirmacion,
-            data.Usuarios_idUsuarios,
-            data.Modalidad_idModalidad,
-            data.Fecha_y_Horarios_idFecha_y_Horarios,
-            id
-        ]
-    )
-    return result.affectedRows > 0
+        `UPDATE asesorias SET ${updates.join(', ')} WHERE idasesorias = ?`,
+        values
+    );
+    return result.affectedRows > 0;
 }
 
 exports.remove = async (id) => {
     const [result] = await pool.execute(
-        'DELETE FROM Asesorias WHERE idAsesorias = ?', [id]
+        'DELETE FROM asesorias WHERE idasesorias = ?', [id]
     )
     return result.affectedRows > 0
 }

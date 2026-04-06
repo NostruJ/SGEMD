@@ -1,41 +1,50 @@
 const { pool } = require('../config/db.config')
 
 exports.findAll = async () => {
-    const [rows] = await pool.execute('SELECT * FROM Seguimientos')
+    const [rows] = await pool.execute('SELECT * FROM seguimientos')
     return rows;
 }
 
 exports.findById = async (id) => {
-    const [rows] = await pool.execute('SELECT * FROM Seguimientos WHERE idSeguimientos = ?', [id])
+    const [rows] = await pool.execute('SELECT * FROM seguimientos WHERE idseguimientos = ?', [id])
     if (rows.length === 0) throw new Error('Seguimiento no encontrado')
     return rows[0]
 }
 
+exports.findByEmprendimiento = async (empId) => {
+    const [rows] = await pool.execute(
+        'SELECT * FROM seguimientos WHERE Emprendimiento_idEmprendimiento = ? ORDER BY FechaCreacion DESC', 
+        [empId]
+    );
+    return rows;
+}
+
 exports.create = async (data) => {
-    const fechaActual = new Date();
+    const fechaActual = new Date().toISOString().split('T')[0];
     const [result] = await pool.execute(
-        `INSERT INTO Seguimientos (
+        `INSERT INTO seguimientos (
             histproal, TipoSeguimiento, Descripcion, SeguimientoCol,
-            FechaCreacion, FechaActualizacion
-        ) VALUES (?, ?, ?, ?, ?, ?)`,
+            FechaCreacion, FechaActualizacion, Emprendimiento_idEmprendimiento
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
-            data.histproal,
-            data.TipoSeguimiento,
-            data.Descripcion,
-            data.SeguimientoCol,
+            data.histproal || 'Seguimiento',
+            data.TipoSeguimiento || 'Nota',
+            data.Descripcion || '',
+            data.SeguimientoCol || null,
             fechaActual,
-            fechaActual
+            fechaActual,
+            data.Emprendimiento_idEmprendimiento || null
         ]
     )
-    return { id: result.insertId, ...data };
+    return { idSeguimientos: result.insertId, ...data };
 }
 
 exports.update = async (id, data) => {
     const [result] = await pool.execute(
-        `UPDATE Seguimientos SET
+        `UPDATE seguimientos SET
             histproal = ?, TipoSeguimiento = ?, Descripcion = ?, SeguimientoCol = ?,
             FechaActualizacion = ?
-        WHERE idSeguimientos = ?`,
+        WHERE idseguimientos = ?`,
         [
             data.histproal,
             data.TipoSeguimiento,
@@ -50,7 +59,7 @@ exports.update = async (id, data) => {
 
 exports.remove = async (id) => {
     const [result] = await pool.execute(
-        'DELETE FROM Seguimientos WHERE idSeguimientos = ?', [id]
+        'DELETE FROM seguimientos WHERE idseguimientos = ?', [id]
     )
     return result.affectedRows > 0;
 }

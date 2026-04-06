@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./NodeBack
+      dockerfile: Dockerfile
+    container_name: sgemd-backend
+    ports:
+      - "3005:3005"
+    environment:
+      - NODE_ENV=production
+      - PORT=3005
+      - DB_HOST=sgemd-db
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=db_segmed
+      - JWT_SECRET=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTIsImVtYWlsIjoidGVzdDJAdW5pbWludXRvLmVkdS5jbyIsInJvbGUiOiJFc3R1ZGlhbnRlIiwidXNlclR5cGUiOiJFc3R1ZGlhbnRlIiwidGltZXN0YW1wIjoxNzU5OTM2NzIxMDExLCJpYXQiOjE3NTk5MzY3MjEsImV4cCI6MTc2MDAyMzEyMX0.P8hK0L02tI2XzAxmV-sSu9e9zN8PI0dP9r0V_XOHTJ8
+      - JWT_EXPIRES_IN=24h
+      - EMAIL_SERVICE=gmail
+      - EMAIL_PORT=587
+      - EMAIL_SECURE=false
+      - EMAIL_USER=sgemd22@gmail.com
+      - EMAIL_PASS=yqbsedoqkwnkryhx
+    volumes:
+      - ./NodeBack/uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - sgemd-network
+
+  frontend:
+    build:
+      context: ./ReactFront
+      dockerfile: Dockerfile
+    container_name: sgemd-frontend
+    ports:
+      - "3001:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:3005
+    depends_on:
+      - backend
+    networks:
+      - sgemd-network
+
+  db:
+    image: mysql:8.0
+    container_name: sgemd-db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=db_segmed
+      - MYSQL_USER=sgemd_user
+      - MYSQL_PASSWORD=sgemd_pass
+    volumes:
+      - sgemd-db-data:/var/lib/mysql
+      - ./NodeBack/database/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
+      - ./NodeBack/database/init.sql:/docker-entrypoint-initdb.d/2_init.sql
+    networks:
+      - sgemd-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  sgemd-network:
+    driver: bridge
+
+volumes:
+  sgemd-db-data:

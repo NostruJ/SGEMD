@@ -1,25 +1,25 @@
 const { pool } = require('../config/db.config')
 
 exports.findAll = async () => {
-    const [rows] = await pool.execute('SELECT * FROM Eventos')
+    const [rows] = await pool.execute('SELECT * FROM eventos')
     return rows
 }
 
 exports.findById = async (id) => {
-    const [rows] = await pool.execute('SELECT * FROM Eventos WHERE idEventos = ?', [id])
+    const [rows] = await pool.execute('SELECT * FROM eventos WHERE ideventos = ?', [id])
     if (rows.length === 0) throw new Error('Evento no encontrado')
     return rows[0]
 }
 
 exports.create = async (data) => {
     const [result] = await pool.execute(
-        `INSERT INTO Eventos (
-            idEventos, Nombre_evento, Descripcion_evento, Tipo_evento_idTipo_evento,
+        `INSERT INTO eventos (
+            ideventos, Nombre_evento, Descripcion_evento, Tipo_evento_idTipo_evento,
             Modalidad_idModalidad, Fecha_y_Horarios_idFecha_y_Horarios, Estado,
             Capacidad_maxima, Requiere_registro, Fecha_creacion, Fecha_actualizacion
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
-            data.idEventos,
+            data.ideventos,
             data.Nombre_evento,
             data.Descripcion_evento,
             data.Tipo_evento_idTipo_evento,
@@ -37,11 +37,11 @@ exports.create = async (data) => {
 
 exports.update = async (id, data) => {
     const [result] = await pool.execute(
-        `UPDATE Eventos SET
+        `UPDATE eventos SET
             Nombre_evento = ?, Descripcion_evento = ?, Tipo_evento_idTipo_evento = ?,
             Modalidad_idModalidad = ?, Fecha_y_Horarios_idFecha_y_Horarios = ?, Estado = ?,
             Capacidad_maxima = ?, Requiere_registro = ?, Fecha_creacion = ?, Fecha_actualizacion = ?
-        WHERE idEventos = ?`,
+        WHERE ideventos = ?`,
         [
             data.Nombre_evento,
             data.Descripcion_evento,
@@ -61,7 +61,7 @@ exports.update = async (id, data) => {
 
 exports.remove = async (id) => {
     const [result] = await pool.execute(
-        'DELETE FROM Eventos WHERE idEventos = ?', [id]
+        'DELETE FROM eventos WHERE ideventos = ?', [id]
     )
     return result.affectedRows > 0
 }

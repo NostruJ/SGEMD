@@ -62,7 +62,7 @@ const Perfil = () => {
           setError(j.error || 'Token inválido o sesión expirada');
           setUser(null);
           setTimeout(() => {
-            window.location.href = '/login';
+            window.location.href = '/';
           }, 1500);
           return;
         }

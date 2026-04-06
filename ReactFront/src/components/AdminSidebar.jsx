@@ -33,9 +33,10 @@ const IconAngleDown = (props) => (
 const menuStructure = [
   { title: 'Perfil', items: ['Completar información personal'] },
   { title: 'Gestionar perfiles', items: ['Docentes', 'Estudiantes'] },
-  { title: 'Emprendimientos', items: ['Plan de trabajo', 'Seguimiento', 'Editar'] },
+  { title: 'Emprendimientos', items: ['Plan de trabajo', 'Crear Emprendimiento'] },
   { title: 'Docentes', items: ['Asignar a emprendimiento', 'Seguimiento', 'Asesorias'] },
   { title: 'Eventos', items: ['Crear', 'Editar'] },
+  { title: 'Diagnósticos', items: ['Gestionar'] },
 ];
 
 const AdminSidebar = () => {
@@ -63,6 +64,11 @@ const AdminSidebar = () => {
       return '/admin/gestionar/docentes';
     if (item === 'estudiantes' && groupTitle === 'Gestionar perfiles')
       return '/admin/gestionar/estudiantes';
+    if (item === 'plandetrabajo') return '/admin/emprendimientos/plan-de-trabajo';
+    if (item === 'crearemprendimiento') return '/admin/emprendimientos/crear';
+    if (item === 'crear' && groupTitle === 'Eventos') return '/admin/eventos';
+    if (item === 'editar' && groupTitle === 'Eventos') return '/admin/eventos';
+    if (item === 'gestionar' && groupTitle === 'Diagnósticos') return '/admin/diagnosticos';
 
     return `/admin/${base}/${item}`;
   };

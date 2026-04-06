@@ -43,7 +43,7 @@ const Maestro = () => {
   };
   return (
     <div className="contenedor-maestro position-relative">
-      <UserMenu user={user} onLogout={() => { window.location.href = '/login'; }} />
+      <UserMenu user={user} onLogout={() => { window.location.href = '/'; }} />
       <SidebarMaestro />
       <main className="contenido-principal">
         <header className="header-superior">

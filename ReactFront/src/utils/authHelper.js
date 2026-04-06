@@ -46,7 +46,7 @@ export const authenticatedFetch = async (endpoint, options = {}) => {
   
   if (!token) {
     console.error('❌ No hay token. Redirigiendo a login...');
-    window.location.href = '/login';
+    window.location.href = '/';
     return { success: false, error: 'No autenticado' };
   }
 
@@ -84,7 +84,7 @@ export const authenticatedFetch = async (endpoint, options = {}) => {
         console.warn('🔄 Token inválido, limpiando y redirigiendo...');
         localStorage.removeItem('token');
         setTimeout(() => {
-          window.location.href = '/login';
+          window.location.href = '/';
         }, 1000);
       }
       

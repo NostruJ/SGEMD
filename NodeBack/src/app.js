@@ -27,6 +27,8 @@ const advice = require('./routes/advice.routes');
 const event = require('./routes/event.routes');
 const typeEvent = require('./routes/typeEvent.routes');
 const dateTimes = require('./routes/dateTimes.routes');
+const assignments = require('./routes/assignments.routes');
+const tareas = require('./routes/tareas.routes');
 
 // Configuración base de la app
 const app = express();
@@ -36,7 +38,7 @@ const PORT = process.env.PORT || 3005;
 // 🔹 Middleware global
 // ============================
 app.use(cors({
-  origin: 'http://localhost:3000', // Permite peticiones desde React
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3001'], // Permite peticiones desde React
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -49,8 +51,9 @@ app.options('*', cors());
 // Parse cookies when frontend uses credentialed requests
 app.use(cookieParser());
 
-app.use(express.json()); // ✅ en lugar de solo bodyParser.json()
-app.use(bodyParser.urlencoded({ extended: true }));
+// Body parsing middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Servir archivos estáticos para imágenes subidas (avatars)
 app.use('/uploads', express.static(require('path').join(__dirname, '..', 'uploads')));
@@ -78,6 +81,8 @@ app.use('/segmed/advice', advice);
 app.use('/segmed/event', event);
 app.use('/segmed/type-event', typeEvent);
 app.use('/segmed/date-times', dateTimes);
+app.use('/segmed/assignments', assignments);
+app.use('/segmed/tareas', tareas);
 
 // ============================
 // 🔹 Ruta base de prueba
@@ -87,14 +92,6 @@ app.get('/segmed', (req, res) => {
     success: true,
     message: 'API de SEG-MED activa 🚀',
   });
-});
-
-// ============================
-// 🔹 Manejo de errores global
-// ============================
-app.use((err, req, res, next) => {
-  console.error('🔥 Error interno:', err.stack);
-  res.status(500).json({ success: false, error: 'Error interno del servidor' });
 });
 
 // 🔹 Rutas no encontradas
@@ -111,6 +108,13 @@ async function startServer() {
     console.error('No se pudo conectar a la base de datos.');
     process.exit(1);
   }
+
+  // Error handler middleware
+  app.use((err, req, res, next) => {
+    console.error('Error global:', err.message);
+    console.error('Stack:', err.stack);
+    res.status(500).json({ success: false, error: err.message });
+  });
 
   app.listen(PORT, () => {
     console.log(`Servidor ejecutándose en: http://localhost:${PORT}`);

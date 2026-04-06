@@ -1,0 +1,26 @@
+-- Rename tables to lowercase to fix case sensitivity
+ALTER TABLE Roles RENAME TO roles;
+ALTER TABLE TipoDocumentos RENAME TO tipodocumentos;
+ALTER TABLE ProgramaAcademico RENAME TO programaacademico;
+ALTER TABLE CentroUniversitarios RENAME TO centrouniversitarios;
+ALTER TABLE TipoUsuarios RENAME TO tipousuarios;
+ALTER TABLE TipoPoblacion RENAME TO tipopoblacion;
+ALTER TABLE Municipios RENAME TO municipios;
+ALTER TABLE Modulos RENAME TO modulos;
+ALTER TABLE Usuarios RENAME TO usuarios;
+ALTER TABLE EtapaEmprendimiento RENAME TO etapaemprendimiento;
+ALTER TABLE SectorEconomico RENAME TO sectoreconomico;
+ALTER TABLE Emprendimiento RENAME TO emprendimiento;
+ALTER TABLE Seguimientos RENAME TO seguimientos;
+ALTER TABLE Asistencia RENAME TO asistencia;
+ALTER TABLE Diagnosticos RENAME TO diagnosticos;
+ALTER TABLE Modalidad RENAME TO modalidad;
+ALTER TABLE Fecha_y_Horarios RENAME TO fecha_y_horarios;
+ALTER TABLE Asesorias RENAME TO asesorias;
+ALTER TABLE Tipo_evento RENAME TO tipo_evento;
+ALTER TABLE Eventos RENAME TO eventos;
+ALTER TABLE Usuarios_has_Eventos RENAME TO usuarios_has_eventos;
+ALTER TABLE CodigosVerificacion RENAME TO codigosverificacion;
+ALTER TABLE Asignaciones RENAME TO asignaciones;
+ALTER TABLE EvaluacionesHabilidades RENAME TO evaluacioneshabilidades;
+ALTER TABLE SolicitudesTutoria RENAME TO solicitudes tutoria;

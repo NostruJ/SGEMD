@@ -58,11 +58,12 @@ router.post('/test-email', async (req, res) => {
 //RUTAS PROTEGIDAS (se declaran ANTES que /:id para evitar conflictos de routing)
 router.get('/me', authenticateToken, usersController.getMe)
 router.get('/', authenticateToken, usersController.getAllUsers)
-router.get('/students', authenticateToken, isAdmin, usersController.getAllStudents)
-router.get('/teachers', authenticateToken, isAdmin, usersController.getAllTeachers)
+router.get('/students', authenticateToken, usersController.getAllStudents)
+router.get('/teachers', authenticateToken, usersController.getAllTeachers)
 router.get('/admins', authenticateToken, isAdmin, usersController.getAllAdmins)
 router.post('/:id/reactivate', authenticateToken, isAdmin, usersController.reactivateUser)
 router.post('/:id/request-reactivation', authenticateToken, usersController.requestReactivation)
+router.delete('/:id/hard', authenticateToken, isAdmin, usersController.hardDeleteUser)
 
 // RUTAS DINÁMICAS (por ID) - DEBEN IR AL FINAL
 router.get('/:id', authenticateToken, usersController.getUsersById)

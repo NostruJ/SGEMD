@@ -1,19 +1,24 @@
 const { pool } = require('../config/db.config')
 
 exports.findAll = async () => {
-    const [rows] = await pool.execute('SELECT * FROM Diagnosticos')
+    const [rows] = await pool.execute('SELECT * FROM diagnosticos')
     return rows
 }
 
 exports.findById = async (id) => {
-    const [rows] = await pool.execute('SELECT * FROM Diagnosticos WHERE idDiagnosticos = ?', [id])
+    const [rows] = await pool.execute('SELECT * FROM diagnosticos WHERE iddiagnosticos = ?', [id])
     if (rows.length === 0) throw new Error('Diagnóstico no encontrado')
     return rows[0]
 }
 
+exports.findByEmprendimiento = async (empId) => {
+    const [rows] = await pool.execute('SELECT * FROM diagnosticos WHERE Emprendimiento_idEmprendimiento = ?', [empId])
+    return rows
+}
+
 exports.create = async (data) => {
     const [result] = await pool.execute(
-        `INSERT INTO Diagnosticos (
+        `INSERT INTO diagnosticos (
             FechaEmprendimiento, AreaEstrategia, Diferencial, Planeacion,
             MercadoObjetivo, Tendencias, Canales, DescripcionPromocion,
             SectorEconomico_idSectorEconomico, Emprendimiento_idEmprendimiento,
@@ -53,7 +58,7 @@ exports.create = async (data) => {
 
 exports.update = async (id, data) => {
     const [result] = await pool.execute(
-        `UPDATE Diagnosticos SET
+        `UPDATE diagnosticos SET
             FechaEmprendimiento = ?, AreaEstrategia = ?, Diferencial = ?, Planeacion = ?,
             MercadoObjetivo = ?, Tendencias = ?, Canales = ?, DescripcionPromocion = ?,
             SectorEconomico_idSectorEconomico = ?, Emprendimiento_idEmprendimiento = ?,
@@ -61,7 +66,7 @@ exports.update = async (id, data) => {
             EstructuraOrganica = ?, ConocimientoLegal = ?, MetodologiaInnovacion = ?,
             HerramientaTecnologicas = ?, Marca = ?, AplicacionMetodologia = ?,
             ImpactoAmbiental = ?, ImpactoSocial = ?, Viabilidad = ?
-        WHERE idDiagnosticos = ?`,
+        WHERE iddiagnosticos = ?`,
         [
             data.FechaEmprendimiento,
             data.AreaEstrategia,
@@ -94,7 +99,7 @@ exports.update = async (id, data) => {
 
 exports.remove = async (id) => {
     const [result] = await pool.execute(
-        'DELETE FROM Diagnosticos WHERE idDiagnosticos = ?', [id]
+        'DELETE FROM diagnosticos WHERE iddiagnosticos = ?', [id]
     )
     return result.affectedRows > 0
 }

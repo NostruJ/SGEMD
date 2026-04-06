@@ -33,14 +33,14 @@ export default function UserMenu({ user, onLogout }) {
       ];
   }
   return (
-    <div style={{ position: 'absolute', top: 20, right: 30, zIndex: 1000 }}
+    <div style={{ position: 'absolute', top: 20, right: 30, zIndex: 9999 }}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}>
-      <button className="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+      <button className="btn btn-light dropdown-toggle" type="button" style={{ position: 'relative', zIndex: 9999 }}>
         <span className="me-2">{user.Nombre || 'Usuario'}</span>
         <span className="badge bg-secondary ms-1">{user.Rol === 1 ? 'Admin' : user.Rol === 2 ? 'Emprendedor' : user.Rol === 3 ? 'Asesor' : 'Usuario'}</span>
       </button>
-      <ul className={`dropdown-menu${open ? ' show' : ''}`} style={{ right: 0, left: 'auto', minWidth: 200 }}>
+      <ul className={`dropdown-menu${open ? ' show' : ''}`} style={{ right: 0, left: 'auto', minWidth: 200, zIndex: 9999, position: 'relative' }}>
         {opciones.map(opt => (
           <li key={opt.label}><a className="dropdown-item" href={opt.href}>{opt.label}</a></li>
         ))}

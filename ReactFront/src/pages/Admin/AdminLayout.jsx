@@ -38,7 +38,7 @@ function AdminLayout() {
 
   return (
     <div className="admin-layout position-relative">
-      <UserMenu user={user} onLogout={() => { window.location.href = '/login'; }} />
+      <UserMenu user={user} onLogout={() => { window.location.href = '/'; }} />
       <AdminSidebar />
 
       <div className="admin-main-content">

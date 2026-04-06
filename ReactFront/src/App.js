@@ -9,14 +9,18 @@ import Register from "./components/Register";
 import PrivateRoute from "./routes/PrivateRoute";
 
 // 🔹 Layouts y páginas del Administrador
-import AdminPage from "./pages/Admin/Admin.jsx"; // Dashboard principal del admin
-import AdminLayout from "./pages/Admin/AdminLayout.jsx"; // Layout con <Outlet />
-
-// 🔹 Subpáginas del Administrador
+import AdminPage from "./pages/Admin/Admin.jsx";
+import AdminLayout from "./pages/Admin/AdminLayout.jsx";
 import AdminAsignar from "./pages/Admin/AdminAsignar.jsx";
 import AdminPerfil from "./pages/Admin/Perfil.jsx";
 import AdminUsuarios from "./pages/Admin/Usuarios.jsx";
 import GestionarUsuarios from "./pages/Admin/GestionarUsuarios.jsx";
+import AdminPlanTrabajo from "./pages/Admin/AdminPlanTrabajo.jsx";
+import AdminEventos from "./pages/Admin/AdminEventos.jsx";
+import AdminDocentes from "./pages/Admin/AdminDocentes.jsx";
+import AdminCrearEmprendimiento from "./pages/Admin/AdminCrearEmprendimiento.jsx";
+import AdminVerEmprendimiento from "./pages/Admin/AdminVerEmprendimiento.jsx";
+import AdminDiagnostico from "./pages/Admin/AdminDiagnostico.jsx";
 
 // 🔹 Páginas del Maestro
 import Maestro from "./pages/Maestro/Maestro.jsx";
@@ -24,12 +28,25 @@ import MaestroDashboard from "./pages/Maestro/MaestroDashboard.jsx";
 import MaestroPerfil from "./pages/Maestro/Perfil.jsx";
 import MaestroAsesorias from "./pages/Maestro/Asesorias.jsx";
 import MaestroAsesoriasCrear from "./pages/Maestro/AsesoriasCrear.jsx";
+import MaestroAsesoriasEditar from "./pages/Maestro/AsesoriasEditar.jsx";
+import MaestroEmprendimientos from "./pages/Maestro/Emprendimientos.jsx";
+import MaestroEmpSeguimiento from "./pages/Maestro/EmpSeguimiento.jsx";
+import MaestroTareas from "./pages/Maestro/MaestroTareas.jsx";
+import MaestroDiagnostico from "./pages/Maestro/MaestroDiagnostico.jsx";
 
 // 🔹 Páginas del Estudiante
 import EstudianteLayout from "./pages/Estudiante/EstudianteLayout.jsx";
 import EstudianteDashboard from "./pages/Estudiante/DashboardContent.jsx";
 import EstudiantePerfil from "./pages/Estudiante/Perfil.jsx";
 import EstudianteProgreso from "./pages/Estudiante/Progreso.jsx";
+import EstudiantePerfilEmp from "./pages/Estudiante/PerfilEmprendimiento.jsx";
+import EstudiantePlan from "./pages/Estudiante/PlanTrabajo.jsx";
+import EstudianteSeguimiento from "./pages/Estudiante/Seguimiento.jsx";
+import EstudianteComparativa from "./pages/Estudiante/Comparativa.jsx";
+import DocentesRecursos from "./pages/Estudiante/DocentesRecursos.jsx";
+import AsesoriasRecursos from "./pages/Estudiante/AsesoriasRecursos.jsx";
+import EventosEstudiante from "./pages/Estudiante/EventosEstudiante.jsx";
+import DiagnosticoEstudiante from "./pages/Estudiante/Diagnostico.jsx";
 
 function App() {
   // 🔹 Estado global del usuario autenticado
@@ -88,8 +105,6 @@ function App() {
       <Routes>
         {/* Ruta pública - Vista combinada (login/register) en la raíz */}
         <Route path="/" element={<Register setUsuario={setUsuario} />} />
-        {/* Rutas alternativas: acceso directo a login o register si se necesita */}
-        <Route path="/login" element={<Login setUsuario={setUsuario} />} />
         <Route path="/register" element={<Register setUsuario={setUsuario} />} />
 
         {/* ========================================================= */}
@@ -110,7 +125,14 @@ function App() {
           <Route index element={<EstudianteDashboard />} />
           <Route path="perfil" element={<EstudiantePerfil />} />
           <Route path="progreso" element={<EstudianteProgreso />} />
-          <Route path="comparativa" element={<div>Vista de Comparativa</div>} />
+          <Route path="emprendimiento/perfil" element={<EstudiantePerfilEmp />} />
+          <Route path="plan" element={<EstudiantePlan />} />
+          <Route path="seguimiento" element={<EstudianteSeguimiento />} />
+          <Route path="comparativa" element={<EstudianteComparativa />} />
+          <Route path="recursos/docentes" element={<DocentesRecursos />} />
+          <Route path="recursos/asesorias" element={<AsesoriasRecursos />} />
+          <Route path="eventos" element={<EventosEstudiante />} />
+          <Route path="diagnostico" element={<DiagnosticoEstudiante />} />
         </Route>
 
         {/* ========================================================= */}
@@ -128,9 +150,11 @@ function App() {
           <Route path="perfil" element={<MaestroPerfil />} />
           <Route path="asesorias" element={<MaestroAsesorias />} />
           <Route path="asesorias/crear" element={<MaestroAsesoriasCrear />} />
-          <Route path="asesorias/editar" element={<div>Editar Asesorías View</div>} />
-          <Route path="emprendimientos/perfil" element={<div>Perfil Emprendimiento View</div>} />
-          <Route path="emprendimientos/seguimiento" element={<div>Seguimiento Emprendimiento View</div>} />
+          <Route path="asesorias/editar" element={<MaestroAsesoriasEditar />} />
+          <Route path="emprendimientos/perfil" element={<MaestroEmprendimientos />} />
+          <Route path="emprendimientos/seguimiento" element={<MaestroEmpSeguimiento />} />
+          <Route path="tareas" element={<MaestroTareas />} />
+          <Route path="diagnosticos" element={<MaestroDiagnostico />} />
         </Route>
 
         {/* ========================================================= */}
@@ -155,13 +179,20 @@ function App() {
 
           {/* 3️⃣ Asignación de docentes */}
           <Route path="docentes/asignar" element={<AdminAsignar />} />
+          <Route path="docentes/gestion" element={<AdminDocentes />} />
 
-          {/* 4️⃣ Otras rutas de ejemplo */}
+          {/* 4️⃣ Gestión de docentes y estudiantes */}
           <Route path="gestionar/docentes" element={<GestionarUsuarios role="docente" />} />
           <Route path="gestionar/estudiantes" element={<GestionarUsuarios role="estudiante" />} />
-          <Route path="emprendimientos/plan-de-trabajo" element={<div>Plan de Trabajo View</div>} />
-          <Route path="eventos/crear" element={<div>Crear Evento View</div>} />
-          <Route path="eventos/editar" element={<div>Editar Evento View</div>} />
+
+          {/* 5️⃣ Emprendimientos y Eventos */}
+          <Route path="emprendimientos/plan-de-trabajo" element={<AdminPlanTrabajo />} />
+          <Route path="emprendimientos/crear" element={<AdminCrearEmprendimiento />} />
+          <Route path="emprendimientos/ver/:id" element={<AdminVerEmprendimiento />} />
+          <Route path="eventos" element={<AdminEventos />} />
+
+          {/* 6️⃣ Diagnósticos */}
+          <Route path="diagnosticos" element={<AdminDiagnostico />} />
         </Route>
 
         {/* ========================================================= */}

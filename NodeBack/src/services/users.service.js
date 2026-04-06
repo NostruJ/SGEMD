@@ -2,9 +2,16 @@
 // Servicio para la gestión de usuarios
 const { pool } = require('../config/db.config');
 const bcrypt = require('bcryptjs');
+
+// Función helper para formatear fecha para MySQL
+const formatDate = (date) => {
+    if (!date) return null;
+    const d = new Date(date);
+    return d.toISOString().split('T')[0];
+};
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'clave_super_secreta';
+const JWT_SECRET = process.env.JWT_SECRET || 'sgemd_super_secret_key_2025';
 
 // Obtener todos los usuarios (incluye estado)
 exports.findAll = async (onlyActive = false) => {
@@ -33,7 +40,7 @@ exports.findAllAdmin = async () => {
 
 // Buscar usuario por ID
 exports.findById = async (id) => {
-    const [rows] = await pool.query('SELECT * FROM usuarios WHERE idUsuarios = ?', [id]);
+    const [rows] = await pool.query('SELECT * FROM usuarios WHERE idusuarios = ?', [id]);
     if (rows.length === 0) throw new Error('Usuario no encontrado');
     return rows[0];
 };
@@ -106,8 +113,8 @@ exports.create = async (data) => {
             data.Modalidad || null,
             data.Roles_idRoles1 || 2,
             data.Verificado !== undefined ? data.Verificado : 0, // Verificado (si no se pasa, es 0)
-            data.FechaCreacion || new Date(),
-            data.FechaActualizacion || new Date(),
+            formatDate(data.FechaCreacion) || formatDate(new Date()),
+            formatDate(data.FechaActualizacion) || formatDate(new Date()),
             data.img_perfil || null
         ]
     );
@@ -130,7 +137,7 @@ exports.create = async (data) => {
     }
 
     return {
-        idUsuarios: result.insertId,
+        idusuarios: result.insertId,
         Nombre,
         CorreoInstitucional,
         Roles_idRoles1: data.Roles_idRoles1 || 2,
@@ -170,17 +177,27 @@ exports.update = async (id, data) => {
 
     if (updates.length === 0) throw new Error('No hay campos para actualizar');
 
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
     updates.push('FechaActualizacion = ?');
-    params.push(data.FechaActualizacion || new Date());
+    params.push(dateStr);
 
     params.push(id);
-    const [result] = await pool.query(`UPDATE usuarios SET ${updates.join(', ')} WHERE idUsuarios = ?`, params);
+    const [result] = await pool.query(`UPDATE usuarios SET ${updates.join(', ')} WHERE idusuarios = ?`, params);
     return result.affectedRows > 0;
 };
 
 // Eliminar usuario (soft-delete: establecer Estado = 0)
 exports.remove = async (id) => {
-    const [result] = await pool.query('UPDATE usuarios SET Estado = 0, FechaActualizacion = ? WHERE idUsuarios = ?', [new Date(), id]);
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
+    const [result] = await pool.query('UPDATE usuarios SET Estado = 0, FechaActualizacion = ? WHERE idusuarios = ?', [dateStr, id]);
+    return result.affectedRows > 0;
+};
+
+// Eliminar usuario definitivamente (hard-delete)
+exports.hardRemove = async (id) => {
+    const [result] = await pool.query('DELETE FROM usuarios WHERE idusuarios = ?', [id]);
     return result.affectedRows > 0;
 };
 
@@ -215,7 +232,7 @@ exports.login = async (CorreoInstitucional, Password) => {
 
     return {
         user: {
-            idUsuarios: user.idUsuarios,
+            idusuarios: user.idusuarios,
             Nombre: user.Nombre,
             Rol: user.Roles_idRoles1,
             CorreoInstitucional: user.CorreoInstitucional
@@ -227,7 +244,7 @@ exports.login = async (CorreoInstitucional, Password) => {
 // Obtener emprendimientos de un estudiante
 exports.getEntrepreneurships = async (idUsuario) => {
     const [rows] = await pool.query(
-        'SELECT * FROM emprendimientos WHERE idUsuario = ?',
+        'SELECT * FROM emprendimiento WHERE Usuarios_idUsuarios = ?',
         [idUsuario]
     );
     return rows;
@@ -245,9 +262,11 @@ exports.verifyUserByEmail = async (CorreoInstitucional) => {
 
 // Reactivar usuario (solo admins)
 exports.reactivate = async (id) => {
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
     const [result] = await pool.query(
-        'UPDATE usuarios SET Estado = 1, FechaActualizacion = ? WHERE idUsuarios = ?',
-        [new Date(), id]
+        'UPDATE usuarios SET Estado = 1, FechaActualizacion = ? WHERE idusuarios = ?',
+        [dateStr, id]
     );
     return result.affectedRows > 0;
 };

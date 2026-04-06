@@ -32,8 +32,9 @@ const IconAngleDown = (props) => (
 
 const menuStructure = [
   { title: 'Perfil', items: ['Completar información personal'] },
-  { title: 'Emprendimientos', items: ['Perfil de Emprendimiento', 'Seguimiento'] },
+  { title: 'Emprendimientos', items: ['Perfil de Emprendimiento', 'Seguimiento', 'Tareas'] },
   { title: 'Asesorías', items: ['Mis Asesorías', 'Crear Asesoría', 'Editar Asesoría'] },
+  { title: 'Diagnósticos', items: ['Ver Diagnósticos'] },
 ];
 
 const SidebarMaestro = () => {
@@ -57,9 +58,12 @@ const SidebarMaestro = () => {
 
     if (item === 'completarinformaciónpersonal') return '/maestro/perfil';
     if (item === 'perfildeemprendimiento') return '/maestro/emprendimientos/perfil';
+    if (item === 'seguimiento') return '/maestro/emprendimientos/seguimiento';
+    if (item === 'tareas') return '/maestro/tareas';
     if (item === 'misasesorías') return '/maestro/asesorias';
     if (item === 'crearasesoria') return '/maestro/asesorias/crear';
     if (item === 'editarasesoria') return '/maestro/asesorias/editar';
+    if (item === 'verdiagnósticos') return '/maestro/diagnosticos';
 
     return `/maestro/${base}/${item}`;
   };

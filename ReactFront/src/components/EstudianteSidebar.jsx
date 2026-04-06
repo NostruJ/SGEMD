@@ -33,7 +33,7 @@ const IconAngleDown = (props) => (
 const menuStructure = [
     { title: 'Perfil', items: ['Completar información personal'] },
     { title: 'Diagnóstico', items: ['Ver diagnóstico'] },
-    { title: 'Emprendimientos', items: ['Plan de Trabajo', 'Estado de Seguimiento'] },
+    { title: 'Emprendimientos', items: ['Plan de Trabajo', 'Estado de Seguimiento', 'Mi Progreso'] },
     { title: 'Recursos', items: ['Docentes', 'Asesorías'] },
     { title: 'Eventos', items: ['Ver eventos disponibles'] },
 ];
@@ -43,7 +43,7 @@ const EstudianteSidebar = () => {
     const activePath = location.pathname;
 
     // Abiertos por defecto
-    const [openMenus, setOpenMenus] = useState(['Perfil', 'Emprendimientos']);
+    const [openMenus, setOpenMenus] = useState(['Perfil', 'Emprendimientos', 'Recursos']);
 
     const toggleMenu = (title) => {
         setOpenMenus((prev) =>
@@ -59,8 +59,11 @@ const EstudianteSidebar = () => {
 
         if (item === 'completarinformaciónpersonal') return '/estudiante/perfil';
         if (item === 'verdiagnóstico') return '/estudiante/diagnostico';
-        if (item === 'plandetrabajo') return '/estudiante/emprendimientos/plan-de-trabajo';
-        if (item === 'estadodeseguimiento') return '/estudiante/emprendimientos/estado-de-seguimiento';
+        if (item === 'plandetrabajo') return '/estudiante/emprendimiento/perfil';
+        if (item === 'estadodeseguimiento') return '/estudiante/seguimiento';
+        if (item === 'miprogreso') return '/estudiante/progreso';
+        if (item === 'docentes') return '/estudiante/recursos/docentes';
+        if (item === 'asesorías') return '/estudiante/recursos/asesorias';
         if (item === 'vereventosdisponibles') return '/estudiante/eventos';
 
         return `/estudiante/${base}/${item}`;

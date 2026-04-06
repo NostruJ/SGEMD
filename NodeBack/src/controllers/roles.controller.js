@@ -1,4 +1,4 @@
-const entidadRoles = require('../services/Roles.service');
+const entidadRoles = require('../services/roles.service');
 
 exports.getAll = async (req, res) => {
     try {

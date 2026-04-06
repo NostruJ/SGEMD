@@ -35,7 +35,7 @@ const EstudianteLayout = () => {
   }, []);
   return (
     <div className="estudiante-layout position-relative">
-      <UserMenu user={user} onLogout={() => { window.location.href = '/login'; }} />
+      <UserMenu user={user} onLogout={() => { window.location.href = '/'; }} />
       {/* Barra lateral */}
       <EstudianteSidebar />
       <main className="main-content">
@@ -46,7 +46,7 @@ const EstudianteLayout = () => {
             <span className="icon-link">🔔</span>
           </div>
         </header>
-        {/* Aquí se cargan las rutas hijas */}
+        {/* Aquí se cargan las rutas hija */}
         <Outlet />
       </main>
     </div>

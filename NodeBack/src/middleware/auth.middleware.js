@@ -2,7 +2,7 @@
 const jwt = require('jsonwebtoken');
 
 // Usar la misma clave que el servicio de users (fallback coincide con users.service)
-const JWT_SECRET = process.env.JWT_SECRET || 'clave_super_secreta';
+const JWT_SECRET = process.env.JWT_SECRET || 'sgemd_super_secret_key_2025';
 
 // Verificar que el token sea válido y no haya expirado
 exports.authenticateToken = (req, res, next) => {
@@ -33,9 +33,14 @@ exports.authenticateToken = (req, res, next) => {
 
     try {
         const decodedToken = jwt.verify(token, JWT_SECRET);
+        console.log('🔑 Token decodificado completo:', JSON.stringify(decodedToken));
         console.log('✅ Token válido para usuario:', decodedToken.id);
         // Añadir información del usuario verificado a la request
-        req.user = decodedToken; // contiene { id, Rol }
+        req.user = {
+            id: decodedToken.id || decodedToken.idusuarios,
+            Rol: decodedToken.Rol
+        };
+        console.log('📌 req.user establecido:', req.user);
         next();
     } catch (err) {
         console.error('❌ Error verificando token:', err.message);

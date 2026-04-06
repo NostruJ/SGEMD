@@ -436,6 +436,30 @@ exports.deleteUser = async (req, res) => {
 };
 
 // ==================================================
+// 📍 ELIMINAR USUARIO DEFINITIVAMENTE (SOLO ADMIN)
+// ==================================================
+exports.hardDeleteUser = async (req, res) => {
+  try {
+    const targetId = parseInt(req.params.id, 10);
+    const requester = req.user || {};
+
+    if (requester.Rol !== 1) {
+      return res.status(403).json({ success: false, error: 'Solo el administrador puede eliminar usuarios definitivamente' });
+    }
+
+    const deleted = await usersService.hardRemove(targetId);
+    if (deleted) {
+      res.json({ success: true, message: 'Usuario eliminado correctamente' });
+    } else {
+      res.status(404).json({ success: false, error: 'Usuario no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error en hardDeleteUser:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+// ==================================================
 // 📍 SUBIR/ACTUALIZAR AVATAR DE USUARIO
 // ==================================================
 exports.uploadAvatar = async (req, res) => {

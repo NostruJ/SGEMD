@@ -9,6 +9,23 @@ exports.getAll = async (req, res) => {
     }
 }
 
+exports.getMyDiagnosis = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { pool } = require('../config/db.config');
+        const [rows] = await pool.execute(
+            `SELECT d.*, e.Nombre as EmprendimientoNombre 
+             FROM diagnosticos d 
+             JOIN emprendimiento e ON d.Emprendimiento_idEmprendimiento = e.idEmprendimiento 
+             WHERE e.Usuarios_idUsuarios = ?`,
+            [userId]
+        );
+        res.json({ success: true, data: rows });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
 exports.getById = async (req, res) => {
     try {
         const data = await diagnostico.findById(req.params.id)
