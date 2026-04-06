@@ -8,8 +8,11 @@
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
 [![Express.js](https://img.shields.io/badge/Express.js-4.x-black)](https://expressjs.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub Stars](https://img.shields.io/github/stars/NostruJ/SGEMD?style=social)](https://github.com/NostruJ/SGEMD/stargazers)
 
 Plataforma web integral para la administración y seguimiento de proyectos de emprendimiento educativo, desarrollada para el Centro Progresa UNIMINUTO.
+
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/NostruJ/SGEMD)
 
 </div>
 
@@ -104,7 +107,7 @@ Platform-SGEMD/
 
 1. **Clonar el repositorio**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/NostruJ/SGEMD.git
    cd Platform-SGEMD
    ```
 
