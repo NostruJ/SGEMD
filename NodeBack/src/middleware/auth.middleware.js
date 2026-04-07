@@ -1,8 +1,11 @@
 // Middleware para autenticación y autorización
 const jwt = require('jsonwebtoken');
 
-// Usar la misma clave que el servicio de users (fallback coincide con users.service)
-const JWT_SECRET = process.env.JWT_SECRET || 'sgemd_super_secret_key_2025';
+// JWT_SECRET debe estar configurado en variables de entorno
+if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET es requerido en variables de entorno');
+}
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Verificar que el token sea válido y no haya expirado
 exports.authenticateToken = (req, res, next) => {

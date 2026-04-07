@@ -469,21 +469,24 @@ docker-compose down
 
 ---
 
-## 11. Actualizaciones Recientes (2026-04-03)
+## 11. Actualizaciones de Seguridad (2026-04-07)
 
 ### Cambios implementados:
-- ✅ Corregido sistema de creación de emprendimientos (error "Bind parameters")
-- ✅ Mejorados gráficos del Dashboard Admin (BarChart, PieChart, RadialBar)
-- ✅ Mejorada vista de Plan de Trabajo con gráficos visuales
-- ✅ Agregada sanitización de datos en controllers
-- ✅ Documentados errores #47-#51 en ERRORES.md
+- ✅ Todas las rutas del backend ahora requieren autenticación JWT
+- ✅ JWT_SECRET es obligatorio (no hay fallback vulnerable)
+- ✅ Códigos de verificación no se loggean en consola
+- ✅ Registro en eventos usa ID del token JWT (previene IDOR)
+- ✅ Corregidos typos en SQL queries
+- ✅ Corregido error de sintaxis en event.routes.js
 
-### Archivos principales modificados:
-- `NodeBack/src/app.js` - Limpieza de middleware
-- `NodeBack/src/controllers/entrepreneurship.controller.js` - Sanitización
-- `NodeBack/src/services/entrepreneurship.service.js` - Manejo de valores
-- `ReactFront/src/pages/Admin/Admin.jsx` - Gráficos mejorados
-- `ReactFront/src/pages/Admin/AdminPlanTrabajo.jsx` - Gráficos mejorados
-- `ReactFront/src/pages/Admin/AdminCrearEmprendimiento.jsx` - Mejor manejo de errores
+### Archivos modificados por seguridad:
+- `NodeBack/src/routes/entrepreneurship.routes.js` - Agregado authenticateToken
+- `NodeBack/src/routes/roles.routes.js` - Agregado authenticateToken
+- `NodeBack/src/routes/diagnosis.routes.js` - Agregado authenticateToken
+- `NodeBack/src/routes/event.routes.js` - Agregado authenticateToken + fix sintaxis
+- `NodeBack/src/middleware/auth.middleware.js` - JWT_SECRET obligatorio
+- `NodeBack/src/services/users.service.js` - JWT_SECRET obligatorio + sin logs
+- `NodeBack/src/services/auth.service.js` - JWT_SECRET obligatorio
+- `NodeBack/src/controllers/event.controller.js` - IDOR fix en register/unregister
 
-*Última actualización: 2026-04-03*
+*Última actualización: 2026-04-07*

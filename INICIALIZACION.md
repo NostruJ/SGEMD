@@ -20,7 +20,7 @@
 | Base de Datos | MySQL (Docker) | 3306 |
 | Contenedores | Docker + Docker Compose | - |
 
-### 1.3 Paleta de Colores
+### 1.3 Paleta de Colores (NO MODIFICAR)
 | Nombre | Hexadecimal | Uso |
 |--------|-------------|-----|
 | Azul Oscuro | `#0c4a6e` | Títulos, Sidebar Admin |
@@ -30,6 +30,14 @@
 | Rojo | `#dc3545` | Error, vencido |
 | Blanco | `#ffffff` | Fondos tarjetas |
 | Gris Claro | `#f4f7f6` | Fondos contenido |
+
+### 1.4 Medidas de Seguridad Implementadas
+| Medida | Descripción |
+|--------|-------------|
+| JWT Obligatorio | JWT_SECRET debe estar en variables de entorno (no hay fallback) |
+| Rutas Protegidas | Todas las rutas del backend requieren token JWT |
+| Validación de Usuario | Registro en eventos usa ID del token, no del body |
+| Sin Logs Sensibles | Códigos de verificación no se loggean |
 
 ---
 
@@ -352,6 +360,7 @@ docker stats
 | 1.6 | 2026-04-03 | Agregado sistema de diagnóstico para los 3 roles: Admin (crear/editar), Maestro (ver), Estudiante (ver). |
 | 1.7 | 2026-04-03 | Corregido MaestroDiagnostico para usar estructura de BD correcta (asignaciones). |
 | 1.8 | 2026-04-03 | Corregido error "Bind parameters undefined" en creación de diagnóstico. Corregida estructura de tabla diagnosticos. |
+| 1.9 | 2026-04-07 | Seguridad: Agregada autenticación a todas las rutas del backend (entrepreneurship, roles, diagnosis, event). Corregido JWT_SECRET obligatorio. Eliminados logs de códigos de verificación. Corregido IDOR en registro de eventos. |
 
-*Documento actualizado: 2026-04-03*
-*Versión: 1.8*
+*Documento actualizado: 2026-04-07*
+*Versión: 1.9*

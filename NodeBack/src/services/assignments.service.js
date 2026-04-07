@@ -27,7 +27,7 @@ exports.findById = async (id) => {
         FROM asignaciones a
         LEFT JOIN usuarios u_est ON a.Usuarios_idEstudiante = u_est.idUsuarios
         LEFT JOIN usuarios u_ment ON a.Usuarios_idMentor = u_ment.idUsuarios
-        LEFT JOIN emprendimiento e ON a.Emprimiento_idEmprendimiento = e.idEmprendimiento
+        LEFT JOIN emprendimiento e ON a.Emprendimiento_idEmprendimiento = e.idEmprendimiento
         WHERE a.idAsignacion = ?
     `, [id])
     if (rows.length === 0) throw new Error('Asignación no encontrada')

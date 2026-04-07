@@ -1,6 +1,10 @@
-/* ============================================================
-   ESTUDIANTE LAYOUT GENERAL
-   ============================================================ */
+/* ============================================
+   SGEMD - Estilos Estudiante (Usando Variables CSS)
+   ============================================ */
+
+/* ===================
+   LAYOUT
+   =================== */
 .estudiante-layout {
   display: flex;
   min-height: 100vh;
@@ -8,27 +12,28 @@
 
 .main-content {
   flex-grow: 1;
-  padding: 20px;
-  background-color: #f4f7f6;
+  padding: var(--space-5);
+  background-color: var(--bg-secondary);
 }
 
-/* ============================================================
-   SIDEBAR (BARRA LATERAL)
-   ============================================================ */
-/* SIDEBAR */
+/* ===================
+   SIDEBAR
+   =================== */
 .sidebar {
-  width: 250px;
-  background-color: #003366; /* Color de fondo */
-  color: white;              /* Color del texto */
-  padding: 20px 0;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  width: var(--sidebar-width);
+  background-color: var(--primary-900);
+  color: white;
+  padding: var(--space-5) 0;
+  box-shadow: var(--shadow);
 }
 
-/* LOGO */
+/* ===================
+   LOGO
+   =================== */
 .logo {
   text-align: center;
-  margin-bottom: 30px;
-  padding: 10px 0;
+  margin-bottom: var(--space-8);
+  padding: var(--space-3) 0;
 }
 
 .logo img {
@@ -36,106 +41,131 @@
   margin: 0 auto;
   max-width: 90%;     
   height: auto;
-
   max-height: 100px;  
   object-fit: contain;
 }
 
-
-/* ============================================================
-   MENÚ PRINCIPAL Y SUBMENÚS
-   ============================================================ */
+/* ===================
+   MENÚ
+   =================== */
 .menu-item-container {
   overflow: hidden;
 }
 
 .menu-item {
-  padding: 15px 20px;
+  padding: var(--space-4) var(--space-5);
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: background-color 0.3s;
+  transition: background-color var(--transition);
+  color: white;
+  font-weight: var(--font-medium);
 }
 
 .menu-item:hover,
 .menu-item.active {
-  background-color: #004080;
+  background-color: var(--primary-700);
 }
 
 .submenu {
   list-style: none;
   padding: 0;
   margin: 0;
-  background-color: #002244;
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .submenu-item {
-  padding: 10px 40px;
+  padding: var(--space-3) var(--space-10);
   cursor: pointer;
-  font-size: 0.9em;
+  font-size: var(--text-sm);
   display: block;
   text-align: left;
   color: white;
-  transition: padding-left 0.2s, background-color 0.2s;
+  text-decoration: none;
+  transition: padding-left var(--transition), background-color var(--transition);
 }
 
 .submenu-item:hover,
 .activo-submenu {
-  background-color: #003366;
-  padding-left: 45px;
+  background-color: var(--primary-700);
+  padding-left: calc(var(--space-10) + 4px);
 }
 
-/* ============================================================
-   HEADER SUPERIOR DEL DASHBOARD
-   ============================================================ */
-
-/* ============================================================
-   CONTENIDO DE TARJETAS Y GRÁFICAS
-   ============================================================ */
+/* ===================
+   DASHBOARD GRID
+   =================== */
 .dashboard-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
+@media (max-width: 992px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .full-width-gauge {
+    grid-column: 1;
+  }
+}
+
+/* ===================
+   TARJETAS
+   =================== */
 .card {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  background-color: var(--bg-white);
+  padding: var(--space-5);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  transition: box-shadow var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
 }
 
 .full-width-gauge {
   grid-column: 1 / 3;
 }
 
+@media (max-width: 992px) {
+  .full-width-gauge {
+    grid-column: 1;
+  }
+}
+
+/* ===================
+   GRÁFICOS
+   =================== */
 .bar-labels {
   display: flex;
   justify-content: space-around;
-  padding-top: 10px;
-  font-weight: bold;
+  padding-top: var(--space-3);
+  font-weight: var(--font-semibold);
 }
 
-/* DONA / ANILLO */
 .ring-labels {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  font-weight: bold;
+  gap: var(--space-4);
+  font-weight: var(--font-semibold);
   margin-top: -30px;
 }
 
-/* ESCALA DE SENTIMIENTO */
+/* ===================
+   SENTIMENT GAUGE
+   =================== */
 .sentiment-gauge {
-  padding: 20px;
+  padding: var(--space-5);
 }
 
 .gauge-track {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 }
 
 .sentiment-point {
@@ -145,38 +175,62 @@
 .emoji {
   font-size: 2.5em;
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: var(--space-3);
 }
 
 .score-box {
   color: white;
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-weight: bold;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--border-radius-sm);
+  font-weight: var(--font-semibold);
 }
 
-/* NPS LABELS */
+/* ===================
+   NPS LABELS
+   =================== */
 .nps-labels {
   display: flex;
   justify-content: space-between;
   padding: 0 10%;
-  font-weight: bold;
-  font-size: 0.9em;
+  font-weight: var(--font-semibold);
+  font-size: var(--text-sm);
 }
 
 .nps-label.detractors {
-  color: #e63946;
+  color: var(--danger);
 }
+
 .nps-label.passives {
-  color: #ffb700;
+  color: var(--warning);
 }
+
 .nps-label.promoters {
-  color: #06d6a0;
+  color: var(--success);
 }
 
-/* ============================================================
-   EXTRAS / LIMPIEZA FINAL
-   ============================================================ */
-
-/* 🚫 Eliminado: .logo-img gigante de debug */
-/* 🚫 Eliminado: comentarios viejos inútiles */
+/* ===================
+   RESPONSIVE
+   =================== */
+@media (max-width: 768px) {
+  .estudiante-layout {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    position: fixed;
+    left: -100%;
+    height: 100vh;
+    z-index: var(--z-fixed);
+    transition: left var(--transition-slow);
+    overflow-y: auto;
+  }
+  
+  .sidebar.open {
+    left: 0;
+  }
+  
+  .main-content {
+    padding: var(--space-4);
+  }
+}

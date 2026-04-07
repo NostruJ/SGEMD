@@ -23,4 +23,4 @@ ALTER TABLE Usuarios_has_Eventos RENAME TO usuarios_has_eventos;
 ALTER TABLE CodigosVerificacion RENAME TO codigosverificacion;
 ALTER TABLE Asignaciones RENAME TO asignaciones;
 ALTER TABLE EvaluacionesHabilidades RENAME TO evaluacioneshabilidades;
-ALTER TABLE SolicitudesTutoria RENAME TO solicitudes tutoria;
+ALTER TABLE SolicitudesTutoria RENAME TO solicitudes_tutoria;

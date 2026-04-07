@@ -1,33 +1,41 @@
+/* ============================================
+   SGEMD - Estilos Admin (Usando Variables CSS)
+   ============================================ */
 
+/* ===================
+   LAYOUT
+   =================== */
 .admin-layout {
     display: grid;
-    /* 250px para el sidebar y 1fr para el contenido */
-    grid-template-columns: 250px 1fr;
+    grid-template-columns: var(--sidebar-width) 1fr;
     grid-template-rows: 100vh;
     overflow: hidden; 
 }
 
+/* ===================
+   SIDEBAR
+   =================== */
 .admin-sidebar {
-    background-color: #0c4a6e; /* Fondo azul oscuro */
+    background-color: var(--primary-900);
     color: white;
     height: 100%;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
 }
 
 .logo-admin-area {
-    background-color: #1a75bc; /* Fondo azul claro superior */
-    padding: 15px 20px;
-    margin-bottom: 5px; 
+    background-color: var(--primary-700);
+    padding: var(--space-4) var(--space-5);
+    margin-bottom: var(--space-1); 
     position: relative;
     overflow: hidden;
-    height: 60px; 
+    height: var(--header-height); 
     display: flex;
     align-items: center;
-    font-weight: bold;
-    font-size: 1.2rem;
+    justify-content: center;
+    font-weight: var(--font-semibold);
+    font-size: var(--text-lg);
 }
 
-/* Franja amarilla decorativa */
 .logo-admin-area::before {
     content: "";
     position: absolute;
@@ -35,175 +43,221 @@
     left: 0;
     width: 20px; 
     height: 100%;
-    background-color: #ffc400; 
+    background-color: var(--accent); 
     transform: skewX(-20deg); 
     transform-origin: top left;
 }
 
-/* Estilo para un grupo de menú (e.g., Gestionar perfiles) */
+.logo-admin-area .logo-admin-imagen {
+    max-height: 50px;
+    width: auto;
+    object-fit: contain;
+    z-index: 2;
+}
+
+/* ===================
+   MENÚ
+   =================== */
 .admin-menu-group-title {
-    padding: 12px 20px;
+    padding: var(--space-3) var(--space-5);
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-weight: bold;
-    background-color: #0c4a6e; /* Mismo color base que el sidebar */
-    border-top: 1px solid #105988;
+    font-weight: var(--font-semibold);
+    background-color: var(--primary-900);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     text-align: left;
+    transition: background-color var(--transition);
 }
 
-/* Estilo para los sub-ítems del menú */
+.admin-menu-group-title:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
 .admin-menu-item {
-    padding: 10px 20px;
+    padding: var(--space-3) var(--space-5);
     cursor: pointer;
-    transition: background-color 0.2s;
-    font-weight: 400;
+    transition: background-color var(--transition);
+    font-weight: var(--font-normal);
     display: block;
     color: white;
     text-decoration: none;
     text-align: left;
+    font-size: var(--text-sm);
 }
 
 .admin-menu-item:hover,
 .admin-menu-item.activo {
-    background-color: #1e88e5; /* Azul más claro para hover o activo */
+    background-color: var(--primary-500);
 }
 
-/* Ítem activo principal (el que tiene el fondo azul fuerte) */
 .admin-menu-item.activo-principal {
-    background-color: #1e88e5; 
-    font-weight: bold;
+    background-color: var(--primary-500); 
+    font-weight: var(--font-semibold);
 }
 
-/* Contenedor para los submenús */
+/* ===================
+   SUBMENÚ
+   =================== */
 .submenu-admin {
     list-style: none;
     padding: 0;
     margin: 0;
-    background-color: #08324a; /* Fondo ligeramente más oscuro para submenús */
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 .submenu-admin .admin-menu-item {
-    padding-left: 40px;
+    padding-left: var(--space-10);
     background-color: inherit;
     text-align: left;
-    font-size: 0.95rem;
+    font-size: var(--text-sm);
 }
 
-
-/* ----------------------------------- */
-/* 3. Contenido Principal              */
-/* ----------------------------------- */
-
+/* ===================
+   CONTENIDO PRINCIPAL
+   =================== */
 .admin-main-content {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: #f4f4f4; /* Fondo gris claro */
+    background-color: var(--bg-secondary);
 }
 
 .admin-header {
-    height: 60px; 
-    background-color: white; 
-    border-bottom: 1px solid #ddd;
+    height: var(--header-height); 
+    background-color: var(--bg-white); 
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: flex-end; 
     align-items: center;
-    padding: 0 20px;
+    padding: 0 var(--space-5);
 }
 
 .admin-header .perfil-admin {
     display: flex;
     align-items: center;
-    font-weight: bold;
-    color: #333;
-    margin-left: 15px; 
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    margin-left: var(--space-4); 
 }
 
 .header-iconos { 
-    color: #444;
-    margin-right: 15px;
-    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-right: var(--space-4);
+    font-size: var(--text-lg);
     cursor: pointer;
+    transition: color var(--transition);
+}
+
+.header-iconos:hover {
+    color: var(--primary-700);
 }
 
 .admin-header .perfil-admin .icono-admin {
-    background-color: #ffc400; 
-    color: #0c4a6e; 
+    background-color: var(--accent); 
+    color: var(--primary-900); 
     border-radius: 50%;
-    padding: 5px;
-    margin-right: 10px;
+    padding: var(--space-2);
+    margin-right: var(--space-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .admin-area-contenido {
-    padding: 20px;
+    padding: var(--space-5);
     flex-grow: 1; 
     overflow-y: auto; 
 }
 
-/* Estilo para las tarjetas genéricas (Admin.jsx y Perfil.jsx) */
+/* ===================
+   TARJETAS
+   =================== */
 .card {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: var(--bg-white);
+    padding: var(--space-5);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow);
 }
 
-/* ----------------------------------- */
-/* 4. Estilos para la Vista AdminAsignar */
-/* ----------------------------------- */
-
+/* ===================
+   FILTROS
+   =================== */
 .asignar-header-filtros {
-    background-color: white;
-    padding: 15px 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    margin-bottom: 20px;
+    background-color: var(--bg-white);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--space-5);
     display: flex;
-    gap: 15px;
+    gap: var(--space-4);
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .asignar-header-filtros input,
 .asignar-header-filtros select {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
     flex-grow: 1;
+    min-width: 150px;
+    font-size: var(--text-sm);
+    transition: border-color var(--transition);
+}
+
+.asignar-header-filtros input:focus,
+.asignar-header-filtros select:focus {
+    border-color: var(--primary-500);
+    outline: none;
 }
 
 .asignar-header-filtros .btn-filtro {
-    background-color: #1a75bc; 
+    background-color: var(--primary-700); 
     color: white;
-    padding: 10px 15px;
+    padding: var(--space-3) var(--space-4);
     border: none;
-    border-radius: 4px;
+    border-radius: var(--border-radius-sm);
     cursor: pointer;
-    transition: background-color 0.2s;
+    font-weight: var(--font-medium);
+    transition: all var(--transition);
 }
 
-/* --- Tarjetas (Cards) --- */
+.asignar-header-filtros .btn-filtro:hover {
+    background-color: var(--primary-900);
+    transform: translateY(-1px);
+}
 
+/* ===================
+   CONTENEDOR DE EMPRENDIMIENTOS
+   =================== */
 .emprendimientos-scroll-container {
     display: flex;
     overflow-x: auto;
-    padding-bottom: 20px;
-    gap: 20px;
-    margin-bottom: 30px;
+    padding-bottom: var(--space-5);
+    gap: var(--space-5);
+    margin-bottom: var(--space-8);
+    -webkit-overflow-scrolling: touch;
 }
 
 .base-card {
     min-width: 250px; 
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    background-color: var(--bg-white);
+    padding: var(--space-5);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
     text-align: center;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.base-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
 .emprendimiento-card {
-    border-top: 5px solid #4CAF50; /* Línea verde */
+    border-top: 4px solid var(--success);
     min-height: 250px;
     display: flex;
     flex-direction: column;
@@ -213,92 +267,97 @@
 .emprendimiento-card-icon {
     width: 80px;
     height: 80px;
-    margin: 0 auto 15px;
-    border: 2px solid #4CAF50; 
-    border-radius: 8px;
-    background-color: #e8f5e9; 
+    margin: 0 auto var(--space-4);
+    border: 2px solid var(--success); 
+    border-radius: var(--border-radius);
+    background-color: var(--success-light); 
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
+/* ===================
+   DOCENTES GRID
+   =================== */
 .docentes-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
+    gap: var(--space-5);
+    margin-top: var(--space-5);
 }
 
 .persona-card-icon {
     width: 100px;
     height: 100px;
-    margin: 0 auto 15px;
-    border: 4px solid #f4f4f4; 
+    margin: 0 auto var(--space-4);
+    border: 4px solid var(--gray-200); 
     border-radius: 50%;
-    background-color: #e0e0e0; 
+    background-color: var(--gray-300); 
 }
 
 .persona-card h3 {
-    color: #1a75bc; 
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 5px;
+    color: var(--primary-700); 
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--space-1);
 }
 
+/* ===================
+   BOTÓN FIJO
+   =================== */
 .fixed-assign-button {
     position: sticky;
-    bottom: 20px;
+    bottom: var(--space-5);
     width: fit-content;
     margin-left: auto; 
-    margin-top: 30px;
-    padding: 10px 25px;
-    background-color: #1a75bc;
+    margin-top: var(--space-8);
+    padding: var(--space-3) var(--space-6);
+    background-color: var(--primary-700);
     color: white;
     border: none;
-    border-radius: 5px;
-    font-size: 1rem;
+    border-radius: var(--border-radius);
+    font-size: var(--text-base);
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-/* src/pages/Admin/Admin.css */
-
-.admin-sidebar {
-    background-color: #0c4a6e; /* Fondo azul oscuro */
-    color: white;
-    height: 100%;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-lg);
+    transition: all var(--transition);
 }
 
-.logo-admin-area {
-    background-color: #1a75bc; /* Fondo azul claro superior */
-    padding: 15px 20px;
-    margin-bottom: 5px; 
-    position: relative;
-    overflow: hidden;
-    height: 60px; 
-    display: flex;
-    align-items: center; /* Centra verticalmente */
-    justify-content: center; /* ¡Añadir para centrar horizontalmente el logo! */
-    font-weight: bold;
-    font-size: 1.2rem;
+.fixed-assign-button:hover {
+    background-color: var(--primary-900);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
 }
 
-/* Franja amarilla decorativa: mantenemos el estilo si lo quieres */
-.logo-admin-area::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 20px; 
-    height: 100%;
-    background-color: #ffc400; 
-    transform: skewX(-20deg); 
-    z-index: 1; /* Asegura que la franja esté detrás del logo si es necesario */
+/* ===================
+   RESPONSIVE
+   =================== */
+@media (max-width: 768px) {
+    .admin-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-sidebar {
+        position: fixed;
+        left: -100%;
+        width: 80%;
+        max-width: 300px;
+        z-index: var(--z-fixed);
+        transition: left var(--transition-slow);
+    }
+    
+    .admin-sidebar.open {
+        left: 0;
+    }
+    
+    .admin-area-contenido {
+        padding: var(--space-4);
+    }
+    
+    .emprendimientos-scroll-container {
+        gap: var(--space-4);
+    }
+    
+    .base-card {
+        min-width: 200px;
+    }
 }
-
-/* NUEVO: Estilos para la imagen del logo */
-.logo-admin-area .logo-admin-imagen {
-    max-height: 50px; /* Tamaño que se ajusta a la altura del contenedor de 60px */
-    width: auto;
-    object-fit: contain; /* Asegura que el logo se vea completo y sin distorsiones */
-    z-index: 2; /* Asegura que la imagen esté sobre la franja amarilla */
-}
-
-/* ... (el resto del CSS es el mismo) ... */

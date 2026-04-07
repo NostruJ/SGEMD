@@ -11,7 +11,11 @@ const formatDate = (date) => {
 };
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'sgemd_super_secret_key_2025';
+// JWT_SECRET debe estar configurado en variables de entorno
+if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET es requerido en variables de entorno');
+}
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Obtener todos los usuarios (incluye estado)
 exports.findAll = async (onlyActive = false) => {
@@ -65,12 +69,8 @@ exports.create = async (data) => {
     // Encriptar contraseña
     const hashedPassword = await bcrypt.hash(Password, 10);
 
-    // Generar código de verificación (6 dígitos) - solo para enviar por email
+    // Generar código de verificación (6 dígitos)
     const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    console.log(`\n🔐 CÓDIGO DE VERIFICACIÓN GENERADO: ${verificationCode}`);
-    console.log(`   Tipo: ${typeof verificationCode}`);
-    console.log(`   Longitud: ${verificationCode.length}`);
-    console.log(`   Para: ${CorreoInstitucional}\n`);
 
     const [result] = await pool.query(
         `INSERT INTO usuarios (
@@ -163,6 +163,9 @@ exports.update = async (id, data) => {
     if (data.FechaNacimiento) { updates.push('FechaNacimiento = ?'); params.push(data.FechaNacimiento); }
     if (data.ProgramaAcademico_idProgramaAcademico1) { updates.push('ProgramaAcademico_idProgramaAcademico1 = ?'); params.push(data.ProgramaAcademico_idProgramaAcademico1); }
     if (data.CentroUniversitarios_idCentroUniversitarios) { updates.push('CentroUniversitarios_idCentroUniversitarios = ?'); params.push(data.CentroUniversitarios_idCentroUniversitarios); }
+    if (data.TipoDocumentos_idTipoDocumento) { updates.push('TipoDocumentos_idTipoDocumento = ?'); params.push(data.TipoDocumentos_idTipoDocumento); }
+    if (data.Municipios_idMunicipio) { updates.push('Municipios_idMunicipio = ?'); params.push(data.Municipios_idMunicipio); }
+    if (data.TipoPoblacion_idTipoPoblacion) { updates.push('TipoPoblacion_idTipoPoblacion = ?'); params.push(data.TipoPoblacion_idTipoPoblacion); }
     if (typeof data.Estado !== 'undefined') { updates.push('Estado = ?'); params.push(data.Estado); }
     if (data.Semestre) { updates.push('Semestre = ?'); params.push(data.Semestre); }
     if (data.Modalidad) { updates.push('Modalidad = ?'); params.push(data.Modalidad); }

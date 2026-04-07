@@ -5,7 +5,6 @@ import AccountDeactivated from '../../components/AccountDeactivated';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3005';
 
-// Utilidad para obtener el token y preparar headers
 const getAuthHeaders = (includeContentType = true) => {
   const token = localStorage.getItem('token');
   const headers = {};
@@ -25,65 +24,78 @@ const Perfil = () => {
   const [avatarFile, setAvatarFile] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [tipoDocs, setTipoDocs] = useState([]);
+  const [programas, setProgramas] = useState([]);
+  const [municipios, setMunicipios] = useState([]);
+  const [tipoPoblacion, setTipoPoblacion] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    console.log('🔐 Token en localStorage:', token ? '✓ Presente' : '✗ Ausente');
-    
     if (!token) {
       setError('No hay sesión activa. Por favor inicia sesión.');
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 1500);
+      setTimeout(() => { window.location.href = '/'; }, 1500);
       return;
     }
-    
+    loadCatalogos();
+    fetchUser();
+  }, []);
+
+  const loadCatalogos = async () => {
+    const headers = getAuthHeaders();
+    try {
+      const [td, prog, mun, tp] = await Promise.all([
+        fetch(`${API_URL}/segmed/type-doc`, { headers }).then(r => r.json()),
+        fetch(`${API_URL}/segmed/academic-programs`, { headers }).then(r => r.json()),
+        fetch(`${API_URL}/segmed/municipalities`, { headers }).then(r => r.json()),
+        fetch(`${API_URL}/segmed/type-pop`, { headers }).then(r => r.json())
+      ]);
+      setTipoDocs(td.data || td || []);
+      setProgramas(prog.data || prog || []);
+      setMunicipios(mun.data || mun || []);
+      setTipoPoblacion(tp.data || tp || []);
+    } catch (err) {
+      console.error('Error cargando catálogos:', err);
+    }
+  };
+
+  const fetchUser = () => {
     const headers = getAuthHeaders(false);
-    console.log('📤 Headers a enviar:', {
-      'Authorization': headers['Authorization'] ? '✓ Presente' : '✗ Ausente',
-      'Authorization Value': headers['Authorization']
-    });
-    
-    console.log('🔹 Iniciando GET /segmed/users/me...');
-    
-    fetch(`${API_URL}/segmed/users/me`, {
-      method: 'GET',
-      headers: headers,
-      credentials: 'include'
-    })
-      .then((r) => {
-        console.log('📨 Respuesta recibida - Status:', r.status, r.statusText);
-        return r.json();
-      })
-      .then((j) => {
-        console.log('✅ JSON parseado:', j);
+    fetch(`${API_URL}/segmed/users/me`, { method: 'GET', headers, credentials: 'include' })
+      .then(r => r.json())
+      .then(j => {
         if (!j.success) {
-          console.error('❌ Error en respuesta:', j.error);
-          setError(j.error || 'Token inválido o sesión expirada');
+          setError(j.error || 'Token inválido');
           setUser(null);
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 1500);
+          setTimeout(() => { window.location.href = '/'; }, 1500);
           return;
         }
         const u = j.data || j;
-        console.log('✅ Usuario cargado:', { id: u.idUsuarios, nombre: u.Nombre });
         setUser(u);
         setForm({
           Nombre: u.Nombre || '',
+          CorreoInstitucional: u.CorreoInstitucional || '',
+          CorreoPersonal: u.CorreoPersonal || '',
           Direccion: u.Direccion || '',
+          Celular: u.Celular || '',
           Telefono: u.Telefono || '',
           Genero: u.Genero || '',
           EstadoCivil: u.EstadoCivil || '',
           Modalidad: u.Modalidad || '',
           Semestre: u.Semestre || '',
           FechaNacimiento: u.FechaNacimiento ? u.FechaNacimiento.slice(0,10) : '',
+          TipoDocumentos_idTipoDocumento: u.TipoDocumentos_idTipoDocumento || '',
+          ProgramaAcademico_idProgramaAcademico1: u.ProgramaAcademico_idProgramaAcademico1 || '',
+          Municipios_idMunicipio: u.Municipios_idMunicipio || '',
+          TipoPoblacion_idTipoPoblacion: u.TipoPoblacion_idTipoPoblacion || ''
         });
-      }).catch((err) => { 
-        console.error('❌ Error en fetch /me:', err);
-        setError('No se pudo conectar al servidor'); 
+        setLoading(false);
+      })
+      .catch(err => {
+        setError('No se pudo conectar al servidor');
+        setLoading(false);
       });
-  }, []);
+  };
 
   const handleEdit = () => { setEditMode(true); setSuccess(''); setError(''); };
 
@@ -175,10 +187,27 @@ const Perfil = () => {
   
   if (!user) return <div className="container mt-5">Cargando perfil...</div>;
 
+  const getTipoDocNombre = (id) => {
+    const td = tipoDocs.find(t => t.idTipoDocumento == id);
+    return td ? td.TipoDocumento : 'Sin completar';
+  };
+  const getProgramaNombre = (id) => {
+    const p = programas.find(pr => pr.idProgramaAcademico == id);
+    return p ? p.Nombre : 'Sin completar';
+  };
+  const getMunicipioNombre = (id) => {
+    const m = municipios.find(mu => mu.idMunicipio == id);
+    return m ? m.Nombre : 'Sin completar';
+  };
+  const getTipoPoblacionNombre = (id) => {
+    const tp = tipoPoblacion.find(tp => tp.idTipoPoblacion == id);
+    return tp ? tp.Nombre : 'Sin completar';
+  };
+
   return (
     <div className="container mt-5 position-relative">
       <div className="row justify-content-center">
-        <div className="col-md-8">
+        <div className="col-md-10">
           <div className="card shadow">
             <div className="card-header bg-primary text-white">
               <h3 className="mb-0">Mi Perfil de Estudiante</h3>
@@ -203,13 +232,20 @@ const Perfil = () => {
                       <table className="table table-borderless mb-0">
                         <tbody>
                           <tr><th>Nombre</th><td>{user.Nombre || <span className="text-muted">Sin completar</span>}</td></tr>
-                          <tr><th>Dirección</th><td>{user.Direccion || <span className="text-muted">Sin completar</span>}</td></tr>
+                          <tr><th>Correo Institucional</th><td>{user.CorreoInstitucional || <span className="text-muted">Sin completar</span>}</td></tr>
+                          <tr><th>Correo Personal</th><td>{user.CorreoPersonal || <span className="text-muted">Sin completar</span>}</td></tr>
+                          <tr><th>Celular</th><td>{user.Celular || <span className="text-muted">Sin completar</span>}</td></tr>
                           <tr><th>Teléfono</th><td>{user.Telefono || <span className="text-muted">Sin completar</span>}</td></tr>
+                          <tr><th>Dirección</th><td>{user.Direccion || <span className="text-muted">Sin completar</span>}</td></tr>
                           <tr><th>Género</th><td>{user.Genero || <span className="text-muted">Sin completar</span>}</td></tr>
                           <tr><th>Estado civil</th><td>{user.EstadoCivil || <span className="text-muted">Sin completar</span>}</td></tr>
+                          <tr><th>Tipo Documento</th><td>{getTipoDocNombre(user.TipoDocumentos_idTipoDocumento)}</td></tr>
+                          <tr><th>Programa Académico</th><td>{getProgramaNombre(user.ProgramaAcademico_idProgramaAcademico1)}</td></tr>
+                          <tr><th>Ciudad</th><td>{getMunicipioNombre(user.Municipios_idMunicipio)}</td></tr>
+                          <tr><th>Tipo Población</th><td>{getTipoPoblacionNombre(user.TipoPoblacion_idTipoPoblacion)}</td></tr>
                           <tr><th>Modalidad</th><td>{user.Modalidad || <span className="text-muted">Sin completar</span>}</td></tr>
                           <tr><th>Semestre</th><td>{user.Semestre || <span className="text-muted">Sin completar</span>}</td></tr>
-                          <tr><th>Fecha de cumpleaños</th><td>{user.FechaNacimiento ? user.FechaNacimiento.slice(0,10) : <span className="text-muted">Sin completar</span>}</td></tr>
+                          <tr><th>Fecha de nacimiento</th><td>{user.FechaNacimiento ? user.FechaNacimiento.slice(0,10) : <span className="text-muted">Sin completar</span>}</td></tr>
                           <tr><th>Última actualización</th><td>{user.FechaActualizacion ? new Date(user.FechaActualizacion).toLocaleString() : 'N/A'}</td></tr>
                         </tbody>
                       </table>
@@ -226,12 +262,20 @@ const Perfil = () => {
                           <input name="Nombre" className="form-control" value={form.Nombre} onChange={handleChange} />
                         </div>
                         <div className="col-md-6">
-                          <label className="form-label">Dirección</label>
-                          <input name="Direccion" className="form-control" value={form.Direccion} onChange={handleChange} />
+                          <label className="form-label">Correo Personal</label>
+                          <input name="CorreoPersonal" type="email" className="form-control" value={form.CorreoPersonal} onChange={handleChange} />
+                        </div>
+                        <div className="col-md-6">
+                          <label className="form-label">Celular</label>
+                          <input name="Celular" className="form-control" value={form.Celular} onChange={handleChange} />
                         </div>
                         <div className="col-md-6">
                           <label className="form-label">Teléfono</label>
                           <input name="Telefono" className="form-control" value={form.Telefono} onChange={handleChange} />
+                        </div>
+                        <div className="col-md-6">
+                          <label className="form-label">Dirección</label>
+                          <input name="Direccion" className="form-control" value={form.Direccion} onChange={handleChange} />
                         </div>
                         <div className="col-md-6">
                           <label className="form-label">Género</label>
@@ -249,6 +293,34 @@ const Perfil = () => {
                           <input name="EstadoCivil" className="form-control" value={form.EstadoCivil} onChange={handleChange} />
                         </div>
                         <div className="col-md-6">
+                          <label className="form-label">Tipo Documento</label>
+                          <select name="TipoDocumentos_idTipoDocumento" className="form-select" value={form.TipoDocumentos_idTipoDocumento} onChange={handleChange}>
+                            <option value="">Selecciona</option>
+                            {tipoDocs.map(td => <option key={td.idTipoDocumento} value={td.idTipoDocumento}>{td.TipoDocumento}</option>)}
+                          </select>
+                        </div>
+                        <div className="col-md-6">
+                          <label className="form-label">Programa Académico</label>
+                          <select name="ProgramaAcademico_idProgramaAcademico1" className="form-select" value={form.ProgramaAcademico_idProgramaAcademico1} onChange={handleChange}>
+                            <option value="">Selecciona</option>
+                            {programas.map(p => <option key={p.idProgramaAcademico} value={p.idProgramaAcademico}>{p.Nombre}</option>)}
+                          </select>
+                        </div>
+                        <div className="col-md-6">
+                          <label className="form-label">Ciudad</label>
+                          <select name="Municipios_idMunicipio" className="form-select" value={form.Municipios_idMunicipio} onChange={handleChange}>
+                            <option value="">Selecciona</option>
+                            {municipios.map(m => <option key={m.idMunicipio} value={m.idMunicipio}>{m.Nombre}</option>)}
+                          </select>
+                        </div>
+                        <div className="col-md-6">
+                          <label className="form-label">Tipo Población</label>
+                          <select name="TipoPoblacion_idTipoPoblacion" className="form-select" value={form.TipoPoblacion_idTipoPoblacion} onChange={handleChange}>
+                            <option value="">Selecciona</option>
+                            {tipoPoblacion.map(tp => <option key={tp.idTipoPoblacion} value={tp.idTipoPoblacion}>{tp.Nombre}</option>)}
+                          </select>
+                        </div>
+                        <div className="col-md-6">
                           <label className="form-label">Modalidad</label>
                           <input name="Modalidad" className="form-control" value={form.Modalidad} onChange={handleChange} />
                         </div>
@@ -257,7 +329,7 @@ const Perfil = () => {
                           <input name="Semestre" className="form-control" value={form.Semestre} onChange={handleChange} />
                         </div>
                         <div className="col-md-6">
-                          <label className="form-label">Fecha de cumpleaños</label>
+                          <label className="form-label">Fecha de nacimiento</label>
                           <input name="FechaNacimiento" type="date" className="form-control" value={form.FechaNacimiento} onChange={handleChange} />
                         </div>
                       </div>

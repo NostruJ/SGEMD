@@ -950,4 +950,110 @@ CREATE TABLE emprendimiento_usuarios (
 
 ---
 
-*Última actualización: 2026-04-05*
+## 66. Error: Rutas del backend sin autenticación expuestas públicamente
+**Causa:** Las rutas de entrepreneurship, roles, diagnosis y eventos no estaban protegidas con middleware de autenticación, permitiendo que cualquier usuario pudiera acceder, crear, editar o eliminar datos sin necesidad de token.
+
+**Errores específicos:**
+- `entrepreneurship.routes.js` - Sin `authenticateToken`
+- `roles.routes.js` - Sin `authenticateToken`
+- `diagnosis.routes.js` - Sin `authenticateToken`
+- `event.routes.js` - Sin autenticación (excepto register/unregister)
+- Error de sintaxis en event.routes.js: `router.delete('/:event.remove` (falta "id"))
+
+**Solución:**
+1. Agregar `authenticateToken` a todas las rutas sensibles
+2. Corregir error de sintaxis en event.routes.js
+3. Proteger todos los endpoints CRUD
+
+**Archivos modificados:**
+- `NodeBack/src/routes/entrepreneurship.routes.js`
+- `NodeBack/src/routes/roles.routes.js`
+- `NodeBack/src/routes/diagnosis.routes.js`
+- `NodeBack/src/routes/event.routes.js`
+
+**Estado:** ✅ Resuelto (2026-04-07)
+
+---
+
+## 67. Error: JWT_SECRET hardcodeado con fallback vulnerable
+**Causa:** El JWT_SECRET tenía un valor por defecto hardcodeado (`sgemd_super_secret_key_2025`) que se usaba si no estaba configurado en variables de entorno, lo cual es una vulnerabilidad de seguridad.
+
+**Archivos afectados:**
+- `NodeBack/src/middleware/auth.middleware.js`
+- `NodeBack/src/services/users.service.js`
+- `NodeBack/src/services/auth.service.js`
+
+**Solución:**
+1. Agregar verificación que lance error si JWT_SECRET no está definido
+2. Actualizar JWT_SECRET en .env a un valor más seguro: `sgemd_f0rt3_k3y_2025_!Xy9#kL2mP`
+3. Actualizar todos los archivos que usan JWT_SECRET
+
+**Archivos modificados:**
+- `NodeBack/src/middleware/auth.middleware.js`
+- `NodeBack/src/services/users.service.js`
+- `NodeBack/src/services/auth.service.js`
+- `NodeBack/.env`
+
+**Estado:** ✅ Resuelto (2026-04-07)
+
+---
+
+## 68. Error: Logging de códigos de verificación en consola
+**Causa:** El código de verificación del usuario se mostraba en los logs del servidor, exponiendo información sensible.
+
+**Solución:** Eliminar los console.log que mostraban el código de verificación.
+
+**Archivos modificados:**
+- `NodeBack/src/services/users.service.js` - Eliminados logs de código de verificación
+
+**Estado:** ✅ Resuelto (2026-04-07)
+
+---
+
+## 69. Error: Usuario puede registrarse en eventos en nombre de otros
+**Causa:** El endpoint de registro de eventos aceptaba cualquier `usuarioId` del body sin verificar que coincidiera con el usuario del token JWT, permitiendo IDOR.
+
+**Solución:** Modificar `event.controller.js` para usar `req.user.idusuarios` del token en lugar de aceptar `usuarioId` del body.
+
+**Antes:**
+```javascript
+const { usuarioId } = req.body;  // Puede ser cualquier ID
+```
+
+**Después:**
+```javascript
+const userId = req.user.idusuarios || req.user.id;  // Del token JWT
+```
+
+**Archivos modificados:**
+- `NodeBack/src/controllers/event.controller.js` - register() y unregister()
+
+**Estado:** ✅ Resuelto (2026-04-07)
+
+---
+
+## 70. Error: Typos en SQL queries del backend
+**Causa:** Error de tipeo en el nombre de columna en el JOIN de assignments: `Emprimiento_idEmprendimiento` vs `Emprendimiento_idEmprendimiento`.
+
+**Solución:** Corregir el nombre de la columna en el query.
+
+**Archivo modificado:**
+- `NodeBack/src/services/assignments.service.js`
+
+**Estado:** ✅ Resuelto (2026-04-07)
+
+---
+
+## 71. Error: Sintaxis SQL incorrecta en script de renombrar tablas
+**Causa:** El script `rename_tables.sql` tenía un error de sintaxis: `solicitudes tutoria` sin guión bajo.
+
+**Solución:** Corregir a `solicitudes_tutoria`.
+
+**Archivo modificado:**
+- `NodeBack/database/rename_tables.sql`
+
+**Estado:** ✅ Resuelto (2026-04-07)
+
+---
+
+*Última actualización: 2026-04-07*

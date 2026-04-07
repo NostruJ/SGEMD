@@ -29,18 +29,15 @@ const EmpSeguimiento = () => {
   }, [empId]);
 
   const loadData = async () => {
-    console.log('Loading data for empId:', empId);
     setLoading(true);
     setError('');
     
     try {
-      // Fetch entrepreneurship
       const empResponse = await fetch(`${API_URL}/segmed/entrepreneurship/${empId}`, {
         headers: getAuthHeaders(),
         credentials: 'include'
       });
       const empJson = await empResponse.json();
-      console.log('Emp response:', empJson);
       
       if (!empJson.success) {
         setError('Emprendimiento no encontrado');
@@ -50,18 +47,15 @@ const EmpSeguimiento = () => {
       
       setEmprendimiento(empJson.data);
       
-      // Fetch tracing
       const tracingResponse = await fetch(`${API_URL}/segmed/tracing/emprendimiento/${empId}`, {
         headers: getAuthHeaders(),
         credentials: 'include'
       });
       const tracingJson = await tracingResponse.json();
-      console.log('Tracing response:', tracingJson);
       
       setNotas(tracingJson.data || []);
       
     } catch (err) {
-      console.error('Error loading data:', err);
       setError('Error al cargar datos: ' + err.message);
     } finally {
       setLoading(false);
@@ -86,7 +80,6 @@ const EmpSeguimiento = () => {
       });
       
       const data = await res.json();
-      console.log('Create note response:', data);
       
       if (data.success) {
         setNewNote('');
@@ -176,7 +169,6 @@ const EmpSeguimiento = () => {
             </div>
           )}
           
-          {/* Agregar nota */}
           <div style={{ marginBottom: '20px' }}>
             <h5 style={{ color: '#0c4a6e' }}>Agregar Nota de Seguimiento</h5>
             <textarea
@@ -197,7 +189,6 @@ const EmpSeguimiento = () => {
             </button>
           </div>
           
-          {/* Historial */}
           <h5 style={{ color: '#0c4a6e' }}>Historial de Seguimiento</h5>
           
           {notas.length === 0 ? (
@@ -230,7 +221,6 @@ const EmpSeguimiento = () => {
             </div>
           )}
           
-          {/* Volver */}
           <div style={{ marginTop: '20px' }}>
             <Link 
               to="/maestro/emprendimientos/perfil" 

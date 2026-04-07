@@ -55,14 +55,14 @@ exports.remove = async (req, res) => {
 
 exports.register = async (req, res) => {
     try {
-        const { usuarioId } = req.body;
         const eventoId = req.params.id;
+        const userId = req.user.idusuarios || req.user.id;
         
         const { pool } = require('../config/db.config');
         
         const [result] = await pool.execute(
             'INSERT INTO usuarios_has_Eventos (Usuarios_idUsuarios, Eventos_idEventos) VALUES (?, ?)',
-            [usuarioId, eventoId]
+            [userId, eventoId]
         );
         
         res.status(201).json({ success: true, message: 'Registrado en evento exitosamente' });
@@ -77,14 +77,14 @@ exports.register = async (req, res) => {
 
 exports.unregister = async (req, res) => {
     try {
-        const { usuarioId } = req.body;
         const eventoId = req.params.id;
+        const userId = req.user.idusuarios || req.user.id;
         
         const { pool } = require('../config/db.config');
         
         const [result] = await pool.execute(
             'DELETE FROM usuarios_has_Eventos WHERE Usuarios_idUsuarios = ? AND Eventos_idEventos = ?',
-            [usuarioId, eventoId]
+            [userId, eventoId]
         );
         
         if (result.affectedRows === 0) {
